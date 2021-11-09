@@ -7,8 +7,19 @@ namespace SharpEngine
 {
     class Program
     {
+        static float[] vertices = new float[]
+        {
+            // vertex 1 x, y, z
+            -0.5f, -0.5f, 0f,
+            // vertex 2 x, y, z
+            0.5f, -0.5f, 0f,
+            // vertex 3 x, y, z
+            0f, 0.5f, 0f
+        };
+
         static void Main(string[] args)
         {
+            
             var window = CreateWindow();
             LoadTriangleIntoBuffer();
             CreateShaderProgram();
@@ -19,6 +30,8 @@ namespace SharpEngine
                 Glfw.PollEvents();
                 glDrawArrays(GL_TRIANGLES, 0,3);
                 glFlush();
+                vertices[4] += 0.001f;
+                UpdateTriangleBuffer();
             }
         }
 
@@ -43,24 +56,22 @@ namespace SharpEngine
 
         private static unsafe void LoadTriangleIntoBuffer()
         {
-            float[] vertices = new float[]
-            {
-                -0.5f, -0.5f, 0f,
-                0.5f, -0.5f, 0f,
-                0f, 0.5f, 0f
-            };
-
             // load the vertices into a buffer
             var vertexArray = glGenVertexArray();
             var vertexBuffer = glGenBuffer();
             glBindVertexArray(vertexArray);
             glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+            UpdateTriangleBuffer();
+            glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), NULL);
+            glEnableVertexAttribArray(0);
+        }
+
+        private static unsafe void UpdateTriangleBuffer()
+        {
             fixed (float* vertex = &vertices[0])
             {
                 glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.Length, vertex, GL_STATIC_DRAW);
             }
-            glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), NULL);
-            glEnableVertexAttribArray(0);
         }
 
         private static Window CreateWindow()

@@ -14,12 +14,7 @@ namespace SharpEngine
             // vertex 2 x, y, z
             0.5f, -0.5f, 0f,
             // vertex 3 x, y, z
-            0f, 0.5f, 0f,
-            
-            //Bring a second triangle
-            -0.5f, 0.5f, 0f,
-            -0.5f, 0.25f, 0f,
-            -0.375f, 0.375f, 0f
+            0f, 0.5f, 0f
         };
 
         static void Main(string[] args)
@@ -28,15 +23,43 @@ namespace SharpEngine
             LoadTriangleIntoBuffer();
             CreateShaderProgram();
 
+            //float angle = 0f;
+            //float r = (float) (0.5 * Math.Sqrt(2));
+
             // engine rendering loop
             while (!Glfw.WindowShouldClose(window))
             {
                 Glfw.PollEvents();
                 glClearColor(0.2f, 0.05f, 0.2f, 1);
                 glClear(GL_COLOR_BUFFER_BIT);
-                glDrawArrays(GL_TRIANGLES, 0,6);
+                glDrawArrays(GL_TRIANGLES, 0,3);
                 glFlush();
-             
+                // Rotate the triangle around its center continuously
+                // method 1
+                // angle += 0.002f;
+                // vertices[6] = (float)(0.5 * Math.Sin(angle));
+                // vertices[7] = (float)(0.5 * Math.Cos(angle));
+                //
+                // vertices[3] = (float)(r * Math.Sin(angle + Math.PI * 135 / 180));
+                // vertices[4] = (float)(r * Math.Cos(angle + Math.PI * 135 / 180));
+                //
+                // vertices[0] = (float)(r * Math.Sin(angle - Math.PI * 135 / 180));
+                // vertices[1] = (float)(r * Math.Cos(angle - Math.PI * 135 / 180));
+
+                // method 2
+                float angle = 0.002f;
+                float tmp = vertices[0];
+                vertices[0] = (float)(vertices[0] * Math.Cos(angle) + vertices[1] * Math.Sin(angle));
+                vertices[1] = (float)(vertices[1] * Math.Cos(angle) - tmp * Math.Sin(angle));
+                
+                tmp = vertices[3];
+                vertices[3] = (float)(vertices[3] * Math.Cos(angle) + vertices[4] * Math.Sin(angle));
+                vertices[4] = (float)(vertices[4] * Math.Cos(angle) - tmp * Math.Sin(angle));
+                
+                tmp = vertices[6];
+                vertices[6] = (float)(vertices[6] * Math.Cos(angle) + vertices[7] * Math.Sin(angle));
+                vertices[7] = (float)(vertices[7] * Math.Cos(angle) - tmp * Math.Sin(angle));
+
                 UpdateTriangleBuffer();
             }
         }
@@ -99,3 +122,5 @@ namespace SharpEngine
         }
     }
 }
+
+

@@ -32,11 +32,11 @@ namespace SharpEngine
                 glClear(GL_COLOR_BUFFER_BIT);
                 glDrawArrays(GL_TRIANGLES, 0,3);
                 glFlush();
-                // Make the whole triangle move to the right continuously
-                 for(int i=0; i<9; i+=3)
-                 {
-                     vertices[i] += 0.001f;
-                 }
+                // Make the whole triangle move down continuously
+                for(int i=0;i<9;i+=3)
+                {
+                    vertices[i+1] -= 0.001f;
+                }
                 UpdateTriangleBuffer();
             }
         }

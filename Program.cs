@@ -28,6 +28,8 @@ namespace SharpEngine
             while (!Glfw.WindowShouldClose(window))
             {
                 Glfw.PollEvents();
+                glClearColor(0.2f, 0.05f, 0.2f, 1);
+                glClear(GL_COLOR_BUFFER_BIT);
                 glDrawArrays(GL_TRIANGLES, 0,3);
                 glFlush();
                 vertices[4] += 0.001f;

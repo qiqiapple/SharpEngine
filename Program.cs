@@ -19,7 +19,7 @@ namespace SharpEngine
 
         static void Main(string[] args)
         {
-            
+            int j=0;
             var window = CreateWindow();
             LoadTriangleIntoBuffer();
             CreateShaderProgram();
@@ -32,7 +32,15 @@ namespace SharpEngine
                 glClear(GL_COLOR_BUFFER_BIT);
                 glDrawArrays(GL_TRIANGLES, 0,3);
                 glFlush();
-                // Change the Triangle's color to be green
+                //Make the whole triangle shrink continuously
+                int shrink = j % 100 < 50 ? 1 : -1;
+                j %= 100;
+                vertices[0] += -shrink * 0.005f;
+                vertices[1] += -shrink * 0.005f;
+                vertices[3] += shrink * 0.005f;
+                vertices[4] += -shrink * 0.005f;
+                vertices[7] += shrink * 0.005f;
+                j++;
                 UpdateTriangleBuffer();
             }
         }

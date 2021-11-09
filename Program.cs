@@ -14,7 +14,12 @@ namespace SharpEngine
             // vertex 2 x, y, z
             0.5f, -0.5f, 0f,
             // vertex 3 x, y, z
-            0f, 0.5f, 0f
+            0f, 0.5f, 0f,
+            
+            //Bring a second triangle
+            -0.5f, 0.5f, 0f,
+            -0.5f, 0.25f, 0f,
+            -0.375f, 0.375f, 0f
         };
 
         static void Main(string[] args)
@@ -29,14 +34,9 @@ namespace SharpEngine
                 Glfw.PollEvents();
                 glClearColor(0.2f, 0.05f, 0.2f, 1);
                 glClear(GL_COLOR_BUFFER_BIT);
-                glDrawArrays(GL_TRIANGLES, 0,3);
+                glDrawArrays(GL_TRIANGLES, 0,6);
                 glFlush();
-                //Make the triangle scale up continuously
-                vertices[0] -= 0.001f;
-                vertices[1] -= 0.001f;
-                vertices[3] += 0.001f;
-                vertices[4] -= 0.001f;
-                vertices[7] += 0.001f;
+             
                 UpdateTriangleBuffer();
             }
         }

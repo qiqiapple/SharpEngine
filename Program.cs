@@ -8,7 +8,7 @@ namespace SharpEngine
     {
         static void Main(string[] args)
         {
-            // Initialize
+            // initialize and configure
             Glfw.Init();
             Glfw.WindowHint(Hint.ClientApi, ClientApi.OpenGL);
             Glfw.WindowHint(Hint.ContextVersionMajor, 3);
@@ -18,6 +18,7 @@ namespace SharpEngine
             Glfw.WindowHint(Hint.OpenglForwardCompatible, Constants.True);
             Glfw.WindowHint(Hint.Doublebuffer, Constants.False);
             
+            // create and launch a window
             var window = Glfw.CreateWindow(1024, 768, "SharpEngine", Monitor.None, Window.None);
             Glfw.MakeContextCurrent(window);
             Import(Glfw.GetProcAddress);
@@ -27,6 +28,8 @@ namespace SharpEngine
                 0.5f, -0.5f, 0f,
                 0f, 0.5f, 0f
             };
+            
+            // load the vertices into a buffer
             var vertexArray = glGenVertexArray();
             var vertexBuffer = glGenBuffer();
             glBindVertexArray(vertexArray);
@@ -83,7 +86,6 @@ void main()
                 //Glfw.SwapBuffers(window);
                 glFlush();
             }
-
 
         }
     }

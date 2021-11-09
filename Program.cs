@@ -7,12 +7,22 @@ namespace SharpEngine
 {
     class Program
     {
+        // static float[] vertices = new float[]
+        // {
+        //     // vertex 1 x, y, z
+        //     -0.5f, -0.5f, 0f,
+        //     // vertex 2 x, y, z
+        //     0.5f, -0.5f, 0f,
+        //     // vertex 3 x, y, z
+        //     0f, 0.5f, 0f
+        // };
+        
         static float[] vertices = new float[]
         {
             // vertex 1 x, y, z
-            -0.5f, -0.5f, 0f,
+            -0.433f, -0.25f, 0f,
             // vertex 2 x, y, z
-            0.5f, -0.5f, 0f,
+            0.433f, -0.25f, 0f,
             // vertex 3 x, y, z
             0f, 0.5f, 0f
         };
@@ -39,12 +49,18 @@ namespace SharpEngine
                 // angle += 0.002f;
                 // vertices[6] = (float)(0.5 * Math.Sin(angle));
                 // vertices[7] = (float)(0.5 * Math.Cos(angle));
-                //
+                
                 // vertices[3] = (float)(r * Math.Sin(angle + Math.PI * 135 / 180));
                 // vertices[4] = (float)(r * Math.Cos(angle + Math.PI * 135 / 180));
                 //
                 // vertices[0] = (float)(r * Math.Sin(angle - Math.PI * 135 / 180));
                 // vertices[1] = (float)(r * Math.Cos(angle - Math.PI * 135 / 180));
+                
+                // vertices[3] = (float)(0.5 * Math.Sin(angle + Math.PI * 120 / 180));
+                // vertices[4] = (float)(0.5 * Math.Cos(angle + Math.PI * 120 / 180));
+                //
+                // vertices[0] = (float)(0.5 * Math.Sin(angle - Math.PI * 120 / 180));
+                // vertices[1] = (float)(0.5 * Math.Cos(angle - Math.PI * 120 / 180));
 
                 // method 2
                 float angle = 0.002f;

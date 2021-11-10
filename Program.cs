@@ -8,30 +8,30 @@ namespace SharpEngine
     
     class Program
     {
-        // static float[] vertices = new float[]
-        // {
-        //     // vertex 1 x, y, z
-        //     -0.1f, -0.1f, 0f,
-        //     // vertex 2 x, y, z
-        //     0.1f, -0.1f, 0f,
-        //     // vertex 3 x, y, z
-        //     0f, 0.1f, 0f,
-        //     
-        //     //Add another triangle
-        //     0.4f, 0.4f, 0f,
-        //     0.6f, 0.4f, 0f,
-        //     0.5f, 0.6f, 0f
-        // };
-        
         static float[] vertices = new float[]
         {
             // vertex 1 x, y, z
-            -0.433f, -0.25f, 0f,
+            -0.1f, -0.1f, 0f,
             // vertex 2 x, y, z
-            0.433f, -0.25f, 0f,
+            0.1f, -0.1f, 0f,
             // vertex 3 x, y, z
-            0f, 0.5f, 0f
+            0f, 0.1f, 0f,
+            
+            //Add another triangle
+            0.4f, 0.4f, 0f,
+            0.6f, 0.4f, 0f,
+            0.5f, 0.6f, 0f
         };
+        
+        // static float[] vertices = new float[]
+        // {
+        //     // vertex 1 x, y, z
+        //     -0.433f, -0.25f, 0f,
+        //     // vertex 2 x, y, z
+        //     0.433f, -0.25f, 0f,
+        //     // vertex 3 x, y, z
+        //     0f, 0.5f, 0f
+        // };
         
         const int vertexX = 0;
         const int vertexY = 1;
@@ -55,13 +55,13 @@ namespace SharpEngine
             {
                 Glfw.PollEvents();
                 ClearScreen();
-                Render();
+                Render(window);
                 
-                // angle += 0.01f;
-                // RotateMethod1(angle); // method 1
+                //angle += 0.01f;
+                //RotateMethod1(angle); // method 1
                 
-                RotateMethod2(); // method 2
-                //ScaleUp();
+                //RotateMethod2(); // method 2
+                ScaleUp();
 
                 UpdateTriangleBuffer();
             }
@@ -69,7 +69,7 @@ namespace SharpEngine
 
         private static void RotateMethod2()
         {
-            float angle = 0.001f;
+            float angle = 0.002f;
             float tmp = vertices[0];
             vertices[0] = (float) (vertices[0] * Math.Cos(angle) + vertices[1] * Math.Sin(angle));
             vertices[1] = (float) (vertices[1] * Math.Cos(angle) - tmp * Math.Sin(angle));
@@ -90,17 +90,16 @@ namespace SharpEngine
             vertices[6] = (float) (0.5 * Math.Sin(angle));
             vertices[7] = (float) (0.5 * Math.Cos(angle));
 
-            vertices[3] = (float) (r * Math.Sin(angle + Math.PI * 135 / 180));
-            vertices[4] = (float) (r * Math.Cos(angle + Math.PI * 135 / 180));
-
-            vertices[0] = (float) (r * Math.Sin(angle - Math.PI * 135 / 180));
-            vertices[1] = (float) (r * Math.Cos(angle - Math.PI * 135 / 180));
-
             vertices[3] = (float) (0.5 * Math.Sin(angle + Math.PI * 120 / 180));
             vertices[4] = (float) (0.5 * Math.Cos(angle + Math.PI * 120 / 180));
 
             vertices[0] = (float) (0.5 * Math.Sin(angle - Math.PI * 120 / 180));
             vertices[1] = (float) (0.5 * Math.Cos(angle - Math.PI * 120 / 180));
+            
+            // vertices[3] = (float) (r * Math.Sin(angle + Math.PI * 135 / 180));
+            // vertices[4] = (float) (r * Math.Cos(angle + Math.PI * 135 / 180));
+            // vertices[0] = (float) (r * Math.Sin(angle - Math.PI * 135 / 180));
+            // vertices[1] = (float) (r * Math.Cos(angle - Math.PI * 135 / 180));
         }
 
         private static void ScaleUp()
@@ -150,10 +149,11 @@ namespace SharpEngine
                 vertices[i] += 0.0001f;
             }
         }
-        private static void Render()
+        private static void Render(Window window)
         {
-            glDrawArrays(GL_TRIANGLES, 0, 2*vertices.Length/vertexSize);
-            glFlush();
+            glDrawArrays(GL_TRIANGLES, 0, vertices.Length/vertexSize);
+            //glFlush();
+            Glfw.SwapBuffers(window);
         }
 
         private static void ClearScreen()
@@ -210,7 +210,7 @@ namespace SharpEngine
             Glfw.WindowHint(Hint.Decorated, true);
             Glfw.WindowHint(Hint.OpenglProfile, Profile.Core);
             Glfw.WindowHint(Hint.OpenglForwardCompatible, Constants.True);
-            Glfw.WindowHint(Hint.Doublebuffer, Constants.False);
+            Glfw.WindowHint(Hint.Doublebuffer, Constants.True);
 
             // create and launch a window
             var window = Glfw.CreateWindow(1024, 768, "SharpEngine", Monitor.None, Window.None);

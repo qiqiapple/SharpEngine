@@ -5,69 +5,19 @@ using static OpenGL.Gl;
 
 namespace SharpEngine
 {
-    struct Vector
-    {
-        public float x, y, z;
-
-        public Vector(float x, float y, float z)
-        {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        public Vector(float x, float y)
-        {
-            this.x = x;
-            this.y = y;
-            this.z = 0;
-        }
-
-        public static Vector operator *(Vector v, float f)
-        {
-            return new Vector(v.x * f, v.y * f, v.z * f);
-        }
-
-        public static Vector operator /(Vector v, float f)
-        {
-            return new Vector(v.x / f, v.y / f, v.z / f);
-        }
-
-        public static Vector operator +(Vector u, Vector v)
-        {
-            return new Vector(u.x + v.x, u.y + v.y, u.z + v.z);
-        }
-        
-        public static Vector operator -(Vector u, Vector v)
-        {
-            return new Vector(u.x - v.x, u.y - v.y, u.z - v.z);
-        }
-
-        public static Vector Max(Vector a, Vector b)
-        {
-            float maxX = Math.Max(a.x, b.x);
-            float maxY = Math.Max(a.y, b.y);
-            return new Vector(maxX, maxY);
-        }
-
-        public static Vector Min(Vector a, Vector b)
-        {
-            float minX = Math.Min(a.x, b.x);
-            float minY = Math.Min(a.y, b.y);
-            return new Vector(minX, minY);
-        }
-    }
-    
     class Program
     {
-        private static Vector[] vertices = new Vector[]
+       private static Vertex[] vertices = new Vertex[]
         {
-            new Vector(-0.1f, -0.1f),
-            new Vector(0.1f, -0.1f),
-            new Vector(0f, 0.1f),
-            new Vector(0.4f, 0.4f),
-            new Vector(0.6f, 0.4f),
-            new Vector(0.5f, 0.6f)
+            new Vertex(new Vector(-0.1f, -0.1f), Color.Red),
+            new Vertex(new Vector(0.1f, -0.1f), Color.Green),
+            new Vertex(new Vector(0f, 0.1f), Color.Blue),
+            new Vertex(new Vector(0.4f, 0.4f), Color.Red),
+            new Vertex(new Vector(0.6f, 0.4f), Color.Green),
+            new Vertex(new Vector(0.5f, 0.6f), Color.Blue)
+            // new Vertex(new Vector(0f, 0f), Color.Red),
+            // new Vertex(new Vector(1f,0f), Color.Green),
+            // new Vertex(new Vector(0f,1f), Color.Blue)
         };
         
         const int vertexSize = 3;
@@ -94,9 +44,7 @@ namespace SharpEngine
                 Render(window);
                 
                 //MoveRight();
-                //MoveDown();
                 //Shrink();
-                //Stretch();
                 //ScaleUp();
                 //GetCenter();
                 //angle += 0.01f;
@@ -105,10 +53,8 @@ namespace SharpEngine
                 Move();
                 UpdateTriangleBuffer();
             }
-
         }
-        
-        
+
         private static void Move()
         {
             GetCenter();
@@ -123,23 +69,23 @@ namespace SharpEngine
 
         private static void GetCenter()
         {
-            var min = vertices[0];
-            var max = vertices[0];
+            var min = vertices[0].position;
+            var max = vertices[0].position;
             scale *= multiplier;
-            for (int i = 0; i < vertices.Length/2; i++)
+            for (int i = 0; i < vertices.Length; i++)
             {
-                min = Vector.Min(min, vertices[i]);
-                max = Vector.Max(max, vertices[i]);
+                min = Vector.Min(min, vertices[i].position);
+                max = Vector.Max(max, vertices[i].position);
             }
             center1 = (min + max) / 2;
             
-            min = vertices[3];
-            max = vertices[3];
+            min = vertices[3].position;
+            max = vertices[3].position;
             scale *= multiplier;
             for (int i = vertices.Length/2; i < vertices.Length; i++)
             {
-                min = Vector.Min(min, vertices[i]);
-                max = Vector.Max(max, vertices[i]);
+                min = Vector.Min(min, vertices[i].position);
+                max = Vector.Max(max, vertices[i].position);
             }
             center2 = (min + max) / 2;
         }
@@ -148,12 +94,12 @@ namespace SharpEngine
         {
             for (int i = 0; i < vertices.Length; i++)
             {
-                if (vertices[i].x >= 1 && velocity.x > 0 || vertices[i].x <= -1 && velocity.x < 0)
+                if (vertices[i].position.x>=1 && velocity.x>0 || vertices[i].position.x<=-1 && velocity.x<0)
                 {
                     velocity.x *= -1;
                     break;
                 }
-                if (vertices[i].y >= 1 && velocity.y > 0 || vertices[i].y <= -1 && velocity.y < 0)
+                if (vertices[i].position.y>=1 && velocity.y>0 || vertices[i].position.y<=-1 && velocity.y<0)
                 {
                     velocity.y *= -1;
                     break;
@@ -163,29 +109,29 @@ namespace SharpEngine
 
         private static void RotateMethod2()
         {
-            float angle = 0.002f;
+            float angle = 0.003f;
 
-            Vector vector2 = vertices[0] - center1;
-            vertices[0].x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center1.x;
-            vertices[0].y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center1.y;
-            vector2 = vertices[1] - center1;
-            vertices[1].x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center1.x;
-            vertices[1].y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center1.y;
-            vector2 = vertices[2] - center1;
-            vertices[2].x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center1.x;
-            vertices[2].y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center1.y;
+            Vector vector2 = vertices[0].position - center1;
+            vertices[0].position.x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center1.x;
+            vertices[0].position.y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center1.y;
+            vector2 = vertices[1].position - center1;
+            vertices[1].position.x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center1.x;
+            vertices[1].position.y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center1.y;
+            vector2 = vertices[2].position - center1;
+            vertices[2].position.x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center1.x;
+            vertices[2].position.y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center1.y;
 
-            vector2 = vertices[3] - center2;
-            vertices[3].x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center2.x;
-            vertices[3].y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center2.y;
+            vector2 = vertices[3].position - center2;
+            vertices[3].position.x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center2.x;
+            vertices[3].position.y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center2.y;
             
-            vector2 = vertices[4] - center2;
-            vertices[4].x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center2.x;
-            vertices[4].y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center2.y;
+            vector2 = vertices[4].position - center2;
+            vertices[4].position.x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center2.x;
+            vertices[4].position.y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center2.y;
             
-            vector2 = vertices[5] - center2;
-            vertices[5].x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center2.x;
-            vertices[5].y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center2.y;
+            vector2 = vertices[5].position - center2;
+            vertices[5].position.x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center2.x;
+            vertices[5].position.y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center2.y;
         }
         
         private static void RotateMethod1(float angle)
@@ -193,61 +139,44 @@ namespace SharpEngine
             
             float r = 0.707f;
             
-            vertices[2].x = (float) (0.5 * Math.Sin(angle));
-            vertices[2].y = (float) (0.5 * Math.Cos(angle));
+            vertices[2].position.x = (float) (0.5 * Math.Sin(angle));
+            vertices[2].position.y = (float) (0.5 * Math.Cos(angle));
         
-            vertices[1].x = (float) (0.5 * Math.Sin(angle + Math.PI * 120 / 180));
-            vertices[1].y = (float) (0.5 * Math.Cos(angle + Math.PI * 120 / 180));
+            vertices[1].position.x = (float) (0.5 * Math.Sin(angle + Math.PI * 120 / 180));
+            vertices[1].position.y = (float) (0.5 * Math.Cos(angle + Math.PI * 120 / 180));
         
-            vertices[0].x = (float) (0.5 * Math.Sin(angle - Math.PI * 120 / 180));
-            vertices[0].y = (float) (0.5 * Math.Cos(angle - Math.PI * 120 / 180));
+            vertices[0].position.x = (float) (0.5 * Math.Sin(angle - Math.PI * 120 / 180));
+            vertices[0].position.y = (float) (0.5 * Math.Cos(angle - Math.PI * 120 / 180));
         }
         
         private static void ScaleUp()
         {
             for (int i = 0; i < vertices.Length; i++)
             {
+                //vertices[i].position = (vertices[i].position - center1) * multiplier + center1;
                 if (i < vertices.Length/2)
                 {
-                    vertices[i] = (vertices[i] - center1) * multiplier + center1;
+                    vertices[i].position = (vertices[i].position - center1) * multiplier + center1;
                 }
                 else
                 {
-                    vertices[i] = (vertices[i] - center2) * multiplier + center2;
+                    vertices[i].position = (vertices[i].position - center2) * multiplier + center2;
                 }
             }
         }
-        
-        private static void Stretch()
-        {
-            vertices[0].y -= 0.0001f;
-            vertices[1].y -= 0.0001f;
-            vertices[2].y += 0.0001f;
-            
-            vertices[3].y -= 0.0001f;
-            vertices[4].y -= 0.0001f;
-            vertices[5].y += 0.0001f;
-        }
-        
+
         private static void MoveUp()
         {
             for (int i = 0; i < vertices.Length; i++)
             {
-                vertices[i] += new Vector(0, velocity.y);
-            }
-        }
-        private static void MoveDown()
-        {
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                vertices[i] += new Vector(0, -0.001f);
+                vertices[i].position += new Vector(0, velocity.y);
             }
         }
         private static void MoveRight()
         {
             for (int i = 0; i < vertices.Length; i++)
             {
-                vertices[i] += new Vector(velocity.x, 0);
+                vertices[i].position += new Vector(velocity.x, 0);
             }
         }
         private static void Render(Window window)
@@ -267,12 +196,12 @@ namespace SharpEngine
         private static void CreateShaderProgram()
         {
             var vertexShader = glCreateShader(GL_VERTEX_SHADER);
-            glShaderSource(vertexShader, File.ReadAllText("shaders/screen-coordinates.vert"));
+            glShaderSource(vertexShader, File.ReadAllText("shaders/position-color.vert"));
             glCompileShader(vertexShader);
 
             // create fragment shader
             var fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-            glShaderSource(fragmentShader, File.ReadAllText("shaders/green.frag"));
+            glShaderSource(fragmentShader, File.ReadAllText("shaders/vertex-color.frag"));
             glCompileShader(fragmentShader);
 
             // create shader program - rendering pipeline
@@ -292,16 +221,18 @@ namespace SharpEngine
             glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
             UpdateTriangleBuffer();
             //glVertexAttribPointer(0, vertexSize, GL_FLOAT, false, vertexSize * sizeof(float), NULL);
-            glVertexAttribPointer(0, vertexSize, GL_FLOAT, false, sizeof(Vector), NULL);
+            glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), NULL);
+            glVertexAttribPointer(1, 4, GL_FLOAT, false, sizeof(Vertex), (void*)sizeof(Vector));
             glEnableVertexAttribArray(0);
+            glEnableVertexAttribArray(1);
         }
 
         private static unsafe void UpdateTriangleBuffer()
         {
-            fixed (Vector* vertex = &vertices[0])
+            fixed (Vertex* vertex = &vertices[0])
             {
                 //glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.Length, vertex, GL_STATIC_DRAW);
-                glBufferData(GL_ARRAY_BUFFER, sizeof(Vector) * vertices.Length, vertex, GL_STATIC_DRAW);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.Length, vertex, GL_STATIC_DRAW);
             }
         }
 
@@ -324,5 +255,3 @@ namespace SharpEngine
         }
     }
 }
-
-

@@ -23,7 +23,7 @@
     <None Update="Shader\red-triangle.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="shaders\red-triangle.vert">
+    <None Update="shaders\screen-coordinates.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="shaders\red.frag">

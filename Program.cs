@@ -31,9 +31,11 @@ namespace SharpEngine
         // );
         private static Triangle triangle = new Triangle(0.2f, 0.2f, new Vector(0, 0));
         private static Rectangle rectangle = new Rectangle(0.3f, 0.2f, new Vector(-0.15f, -0.1f));
+        private static Circle circle = new Circle(0.1f, new Vector(0.1f, -0.2f));
 
         private static float multiplier_tri = 0.999f;
         private static float multiplier_rec = 0.999f;
+        private static float multiplier_cir = 0.999f;
 
         static void Main(string[] args)
         {
@@ -70,6 +72,13 @@ namespace SharpEngine
             if (rectangle.CurrentScale >= 1.3f) multiplier_rec = 0.999f;
             if (rectangle.CurrentScale <= 0.3f) multiplier_rec = 1.001f;
             rectangle.Scale(multiplier_rec);
+            
+            circle.Bounce();
+            circle.Move();
+            circle.Rotate();
+            if (circle.CurrentScale >= 0.9f) multiplier_cir = 0.999f;
+            if (circle.CurrentScale <= 0.4f) multiplier_cir = 1.001f;
+            circle.Scale(multiplier_cir);
         }
 
         private static void Render(Window window)
@@ -77,6 +86,7 @@ namespace SharpEngine
             triangle.Render();
             //triangle2.Render();
             rectangle.Render();
+            circle.Render();
             Glfw.SwapBuffers(window);
         }
 

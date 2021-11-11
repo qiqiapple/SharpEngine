@@ -14,23 +14,26 @@ namespace SharpEngine
         //         new Vertex(new Vector(0f, 1f), Color.Blue)
         //     }
         // );
-        private static Triangle triangle = new Triangle(
-            new Vertex[]{
-                new Vertex(new Vector(-0.1f, -0.1f), Color.Red),
-                new Vertex(new Vector(0.1f, -0.1f), Color.Green),
-                new Vertex(new Vector(0f, 0.1f), Color.Blue)
-            }
-        );
-        
-        private static Triangle triangle2 = new Triangle(
-            new Vertex[]{
-                new Vertex(new Vector(0.4f, 0.4f), Color.Red),
-                new Vertex(new Vector(0.6f, 0.4f), Color.Green),
-                new Vertex(new Vector(0.5f, 0.6f), Color.Blue)
-            }
-        );
+        // private static Triangle triangle = new Triangle(
+        //     new Vertex[]{
+        //         new Vertex(new Vector(-0.1f, -0.1f), Color.Red),
+        //         new Vertex(new Vector(0.1f, -0.1f), Color.Green),
+        //         new Vertex(new Vector(0f, 0.1f), Color.Blue)
+        //     }
+        // );
+        //
+        // private static Triangle triangle2 = new Triangle(
+        //     new Vertex[]{
+        //         new Vertex(new Vector(0.4f, 0.4f), Color.Red),
+        //         new Vertex(new Vector(0.6f, 0.4f), Color.Green),
+        //         new Vertex(new Vector(0.5f, 0.6f), Color.Blue)
+        //     }
+        // );
+        private static Triangle triangle = new Triangle(0.2f, 0.2f, new Vector(0, 0));
+        private static Rectangle rectangle = new Rectangle(0.3f, 0.2f, new Vector(-0.15f, -0.1f));
 
-        private static float multiplier = 0.999f;
+        private static float multiplier_tri = 0.999f;
+        private static float multiplier_rec = 0.999f;
 
         static void Main(string[] args)
         {
@@ -49,23 +52,31 @@ namespace SharpEngine
 
         private static void Play()
         {
-            //ChangeDirection();
             triangle.Bounce();
-            triangle2.Bounce();
             triangle.Move();
-            triangle2.Move();
             triangle.Rotate();
-            triangle2.Rotate();
-            if (triangle.CurrentScale >= 1f) multiplier = 0.999f;
-            if (triangle.CurrentScale <= 0.5f) multiplier = 1.001f;
-            triangle.Scale(multiplier);
-            triangle2.Scale(multiplier);
+            
+            // triangle2.Bounce();
+            // triangle2.Move();
+            // triangle2.Rotate();
+            if (triangle.CurrentScale >= 1f) multiplier_tri = 0.999f;
+            if (triangle.CurrentScale <= 0.5f) multiplier_tri = 1.001f;
+            triangle.Scale(multiplier_tri);
+            //triangle2.Scale(multiplier);
+            
+            rectangle.Bounce();
+            rectangle.Move();
+            rectangle.Rotate();
+            if (rectangle.CurrentScale >= 1.3f) multiplier_rec = 0.999f;
+            if (rectangle.CurrentScale <= 0.3f) multiplier_rec = 1.001f;
+            rectangle.Scale(multiplier_rec);
         }
 
         private static void Render(Window window)
         {
             triangle.Render();
-            triangle2.Render();
+            //triangle2.Render();
+            rectangle.Render();
             Glfw.SwapBuffers(window);
         }
 

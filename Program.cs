@@ -28,9 +28,33 @@ namespace SharpEngine
             return new Vector(v.x * f, v.y * f, v.z * f);
         }
 
+        public static Vector operator /(Vector v, float f)
+        {
+            return new Vector(v.x / f, v.y / f, v.z / f);
+        }
+
         public static Vector operator +(Vector u, Vector v)
         {
             return new Vector(u.x + v.x, u.y + v.y, u.z + v.z);
+        }
+        
+        public static Vector operator -(Vector u, Vector v)
+        {
+            return new Vector(u.x - v.x, u.y - v.y, u.z - v.z);
+        }
+
+        public static Vector Max(Vector a, Vector b)
+        {
+            float maxX = Math.Max(a.x, b.x);
+            float maxY = Math.Max(a.y, b.y);
+            return new Vector(maxX, maxY);
+        }
+
+        public static Vector Min(Vector a, Vector b)
+        {
+            float minX = Math.Min(a.x, b.x);
+            float minY = Math.Min(a.y, b.y);
+            return new Vector(minX, minY);
         }
     }
     
@@ -49,21 +73,19 @@ namespace SharpEngine
         const int vertexSize = 3;
 
         private static Vector velocity = new Vector(0.003f, 0.002f);
-        private static float factor = 0.001f;
-        private static int scale = 1;
-        private static int shrink = 1;
-
+        private static float multiplier = 0.999f;
+        private static float scale = 1f;
         private static Vector center1;
         private static Vector center2;
-        
+
         static void Main(string[] args)
         {
             var window = CreateWindow();
             LoadTriangleIntoBuffer();
             CreateShaderProgram();
-
+            
             float angle = 0f;
-
+            
             // engine rendering loop
             while (!Glfw.WindowShouldClose(window))
             {
@@ -76,48 +98,62 @@ namespace SharpEngine
                 //Shrink();
                 //Stretch();
                 //ScaleUp();
+                //GetCenter();
                 //angle += 0.01f;
                 //RotateMethod1(angle); // method 1
                 //RotateMethod2(); // method 2
-
                 Move();
                 UpdateTriangleBuffer();
             }
-        }
 
+        }
+        
+        
         private static void Move()
         {
-            center1 = (vertices[0] + vertices[1] + vertices[2])*(0.33333f);
-            center2 = (vertices[3] + vertices[4] + vertices[5])*(0.33333f);
+            GetCenter();
             ChangeDirection();
             MoveRight();
             MoveUp();
             RotateMethod2();
-
-            shrink = scale % 100 < 50 ? 1 : -1;
-            scale %= 100;
-            if (shrink==-1)
-            {
-                ScaleUp();
-            }
-            if (shrink==1)
-            {
-                Shrink();
-                
-            }
-            scale++;
-            
+            if (scale >= 1f) multiplier = 0.999f;
+            if (scale <= 0.5f) multiplier = 1.001f;
+            ScaleUp();
         }
 
+        private static void GetCenter()
+        {
+            var min = vertices[0];
+            var max = vertices[0];
+            scale *= multiplier;
+            for (int i = 0; i < vertices.Length/2; i++)
+            {
+                min = Vector.Min(min, vertices[i]);
+                max = Vector.Max(max, vertices[i]);
+            }
+            center1 = (min + max) / 2;
+            
+            min = vertices[3];
+            max = vertices[3];
+            scale *= multiplier;
+            for (int i = vertices.Length/2; i < vertices.Length; i++)
+            {
+                min = Vector.Min(min, vertices[i]);
+                max = Vector.Max(max, vertices[i]);
+            }
+            center2 = (min + max) / 2;
+        }
 
         private static void ChangeDirection()
         {
             for (int i = 0; i < vertices.Length; i++)
             {
-                if (vertices[i].x >= 0.9) velocity.x *= -1;
-                if (vertices[i].x <= -0.9) velocity.x *= -1;
-                if (vertices[i].y >= 0.9) velocity.y *= -1;
-                if (vertices[i].y <= -0.9)
+                if (vertices[i].x >= 1 && velocity.x > 0 || vertices[i].x <= -1 && velocity.x < 0)
+                {
+                    velocity.x *= -1;
+                    break;
+                }
+                if (vertices[i].y >= 1 && velocity.y > 0 || vertices[i].y <= -1 && velocity.y < 0)
                 {
                     velocity.y *= -1;
                     break;
@@ -129,32 +165,32 @@ namespace SharpEngine
         {
             float angle = 0.002f;
 
-            Vector vector2 = vertices[0] + center1 *(-1);
-            vertices[0].x = (float) (vector2.x * Math.Cos(angle) + vector2.y * Math.Sin(angle) + center1.x);
-            vertices[0].y = (float) (vector2.y * Math.Cos(angle) - vector2.x * Math.Sin(angle) + center1.y);
-            vector2 = vertices[1] + center1 *(-1);
-            vertices[1].x = (float) (vector2.x * Math.Cos(angle) + vector2.y * Math.Sin(angle) + center1.x);
-            vertices[1].y = (float) (vector2.y * Math.Cos(angle) - vector2.x * Math.Sin(angle) + center1.y);
-            vector2 = vertices[2] + center1 *(-1);
-            vertices[2].x = (float) (vector2.x * Math.Cos(angle) + vector2.y * Math.Sin(angle) + center1.x);
-            vertices[2].y = (float) (vector2.y * Math.Cos(angle) - vector2.x * Math.Sin(angle) + center1.y);
+            Vector vector2 = vertices[0] - center1;
+            vertices[0].x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center1.x;
+            vertices[0].y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center1.y;
+            vector2 = vertices[1] - center1;
+            vertices[1].x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center1.x;
+            vertices[1].y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center1.y;
+            vector2 = vertices[2] - center1;
+            vertices[2].x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center1.x;
+            vertices[2].y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center1.y;
 
-
-            vector2 = vertices[3] + center2 *(-1);
-            vertices[3].x = (float) (vector2.x * Math.Cos(angle) + vector2.y * Math.Sin(angle) + center2.x);
-            vertices[3].y = (float) (vector2.y * Math.Cos(angle) - vector2.x * Math.Sin(angle) + center2.y);
-        
-            vector2 = vertices[4] + center2 *(-1);
-            vertices[4].x = (float) (vector2.x * Math.Cos(angle) + vector2.y * Math.Sin(angle) + center2.x);
-            vertices[4].y = (float) (vector2.y * Math.Cos(angle) - vector2.x * Math.Sin(angle) + center2.y);
-        
-            vector2 = vertices[5] + center2 *(-1);
-            vertices[5].x = (float) (vector2.x * Math.Cos(angle) + vector2.y * Math.Sin(angle) + center2.x);
-            vertices[5].y = (float) (vector2.y * Math.Cos(angle) - vector2.x * Math.Sin(angle) + center2.y);
+            vector2 = vertices[3] - center2;
+            vertices[3].x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center2.x;
+            vertices[3].y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center2.y;
+            
+            vector2 = vertices[4] - center2;
+            vertices[4].x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center2.x;
+            vertices[4].y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center2.y;
+            
+            vector2 = vertices[5] - center2;
+            vertices[5].x = vector2.x * MathF.Cos(angle) + vector2.y * MathF.Sin(angle) + center2.x;
+            vertices[5].y = vector2.y * MathF.Cos(angle) - vector2.x * MathF.Sin(angle) + center2.y;
         }
         
         private static void RotateMethod1(float angle)
         {
+            
             float r = 0.707f;
             
             vertices[2].x = (float) (0.5 * Math.Sin(angle));
@@ -165,29 +201,20 @@ namespace SharpEngine
         
             vertices[0].x = (float) (0.5 * Math.Sin(angle - Math.PI * 120 / 180));
             vertices[0].y = (float) (0.5 * Math.Cos(angle - Math.PI * 120 / 180));
-            
-            // vertices[3] = (float) (r * Math.Sin(angle + Math.PI * 135 / 180));
-            // vertices[4] = (float) (r * Math.Cos(angle + Math.PI * 135 / 180));
-            // vertices[0] = (float) (r * Math.Sin(angle - Math.PI * 135 / 180));
-            // vertices[1] = (float) (r * Math.Cos(angle - Math.PI * 135 / 180));
         }
         
         private static void ScaleUp()
         {
             for (int i = 0; i < vertices.Length; i++)
             {
-                Vector vectorToCenter;
-                if (i < vertices.Length / 2)
+                if (i < vertices.Length/2)
                 {
-                    vectorToCenter = center1 * (-1) + vertices[i];
+                    vertices[i] = (vertices[i] - center1) * multiplier + center1;
                 }
                 else
                 {
-                    vectorToCenter = center2 * (-1) + vertices[i];
+                    vertices[i] = (vertices[i] - center2) * multiplier + center2;
                 }
-                if (vectorToCenter.x < 0.001 && vectorToCenter.x > -0.001) vectorToCenter.x = 0;
-                if (vectorToCenter.y < 0.001 && vectorToCenter.y > -0.001) vectorToCenter.y = 0;
-                vertices[i] += new Vector(Math.Sign(vectorToCenter.x), Math.Sign(vectorToCenter.y)) * factor;
             }
         }
         
@@ -202,24 +229,6 @@ namespace SharpEngine
             vertices[5].y += 0.0001f;
         }
         
-        private static void Shrink()
-        {
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                Vector vectorToCenter;
-                if (i < vertices.Length / 2)
-                {
-                    vectorToCenter = center1 + vertices[i] * (-1);
-                }
-                else
-                {
-                    vectorToCenter = center2 + vertices[i] * (-1);
-                }
-                if (vectorToCenter.x < 0.001 && vectorToCenter.x > -0.001) vectorToCenter.x = 0;
-                if (vectorToCenter.y < 0.001 && vectorToCenter.y > -0.001) vectorToCenter.y = 0;
-                vertices[i] += new Vector(Math.Sign(vectorToCenter.x), Math.Sign(vectorToCenter.y)) * factor;
-            }
-        }
         private static void MoveUp()
         {
             for (int i = 0; i < vertices.Length; i++)

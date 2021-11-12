@@ -1,6 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using System.Xml.Schema;
 using GLFW;
+using OpenGL;
 using static OpenGL.Gl;
 
 namespace SharpEngine
@@ -30,7 +31,7 @@ namespace SharpEngine
         //     }
         // );
         private static Triangle triangle = new Triangle(0.2f, 0.2f, new Vector(0, 0));
-        private static Triangle triangle2 = new Triangle(0.2f, 0.2f, new Vector(-0.2f, -0.3f));
+        //private static Triangle triangle2 = new Triangle(0.2f, 0.2f, new Vector(-0.2f, -0.3f));
         private static Rectangle rectangle = new Rectangle(0.3f, 0.2f, new Vector(-0.15f, -0.1f));
         private static Circle circle = new Circle(0.1f, new Vector(0.1f, -0.2f));
         private static Cone cone = new Cone(0.1f, new Vector(-0.1f, -0.2f));
@@ -40,14 +41,20 @@ namespace SharpEngine
         private static float multiplier_cir = 0.999f;
         private static float multiplier_con = 0.999f;
 
+        private static float ratio;
+
         static void Main(string[] args)
         {
             var window = CreateWindow();
-            CreateShaderProgram();
-            
+            int ratioLocation = CreateShaderProgram();
+            Glfw.GetWindowSize(window, out int width, out int height);
+
             // engine rendering loop
             while (!Glfw.WindowShouldClose(window))
             {
+                ratio = (float) width / height;
+                glUniform1f(ratioLocation, ratio);
+
                 Glfw.PollEvents();
                 ClearScreen();
                 Render(window);
@@ -55,35 +62,52 @@ namespace SharpEngine
             }
         }
 
+
         private static void Play()
         {
-            triangle.Bounce();
+            TrianglePlay();
+            RectanglePlay();
+            CirclePlay();
+            ConePlay();
+        }
+
+        private static void TrianglePlay()
+        {
+            triangle.Bounce(ratio);
             triangle.Move();
             triangle.Rotate();
-            
-            triangle2.Bounce();
-            triangle2.Move();
-            triangle2.Rotate();
+            // triangle2.Bounce();
+            // triangle2.Move();
+            // triangle2.Rotate();
             if (triangle.CurrentScale >= 1f) multiplier_tri = 0.999f;
             if (triangle.CurrentScale <= 0.5f) multiplier_tri = 1.001f;
             triangle.Scale(multiplier_tri);
-            triangle2.Scale(multiplier_tri);
-            
-            rectangle.Bounce();
+            //triangle2.Scale(multiplier_tri);
+        }
+
+        private static void RectanglePlay()
+        {
+            rectangle.Bounce(ratio);
             rectangle.Move();
             rectangle.Rotate();
             if (rectangle.CurrentScale >= 1.3f) multiplier_rec = 0.999f;
             if (rectangle.CurrentScale <= 0.3f) multiplier_rec = 1.001f;
             rectangle.Scale(multiplier_rec);
-            
-            circle.Bounce();
+        }
+
+        private static void CirclePlay()
+        {
+            circle.Bounce(ratio);
             circle.Move();
             circle.Rotate();
             if (circle.CurrentScale >= 0.9f) multiplier_cir = 0.999f;
             if (circle.CurrentScale <= 0.4f) multiplier_cir = 1.001f;
             circle.Scale(multiplier_cir);
-            
-            cone.Bounce();
+        }
+
+        private static void ConePlay()
+        {
+            cone.Bounce(ratio);
             cone.Move();
             cone.Rotate();
             if (cone.CurrentScale >= 0.7f) multiplier_con = 0.999f;
@@ -94,7 +118,7 @@ namespace SharpEngine
         private static void Render(Window window)
         {
             triangle.Render();
-            triangle2.Render();
+            //triangle2.Render();
             rectangle.Render();
             circle.Render();
             cone.Render();
@@ -107,8 +131,9 @@ namespace SharpEngine
             glClear(GL_COLOR_BUFFER_BIT);
         }
 
-        private static void CreateShaderProgram()
+        private static int CreateShaderProgram()
         {
+            
             var vertexShader = glCreateShader(GL_VERTEX_SHADER);
             glShaderSource(vertexShader, File.ReadAllText("shaders/position-color.vert"));
             glCompileShader(vertexShader);
@@ -124,6 +149,9 @@ namespace SharpEngine
             glAttachShader(program, fragmentShader);
             glLinkProgram(program);
             glUseProgram(program);
+
+            int ratioLocation = glGetUniformLocation(program, "aspectRatio");
+            return ratioLocation;
         }
 
         private static Window CreateWindow()
@@ -140,6 +168,7 @@ namespace SharpEngine
             // create and launch a window
             var window = Glfw.CreateWindow(1024, 768, "SharpEngine", Monitor.None, Window.None);
             Glfw.MakeContextCurrent(window);
+            
             Import(Glfw.GetProcAddress);
             return window;
         }

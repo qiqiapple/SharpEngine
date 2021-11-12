@@ -1,5 +1,4 @@
 ﻿using System;
-using OpenGL;
 namespace SharpEngine
 {
     public class Circle: Shape
@@ -9,7 +8,7 @@ namespace SharpEngine
         {
             float theta = MathF.PI * 2 / partition;
             vertices[0].position = position;
-            vertices[0].color = new Color(0.5f, 0.5f, 0.5f, 1);
+            vertices[0].color = Color.Yellow;
             
             for (int i = 1; i < partition + 1; i++)
             {

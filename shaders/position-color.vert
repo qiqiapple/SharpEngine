@@ -4,8 +4,11 @@ layout (location =1) in vec4 color;
 
 out vec4 vertexColor;
 
+uniform float aspectRatio;
+
 void main()
 {
-    gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
+    //gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
+    gl_Position = vec4(pos.x/aspectRatio, pos.y, pos.z, 1.0);
     vertexColor = color;
 }

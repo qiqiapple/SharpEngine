@@ -30,6 +30,7 @@ namespace SharpEngine
         //     }
         // );
         private static Triangle triangle = new Triangle(0.2f, 0.2f, new Vector(0, 0));
+        private static Triangle triangle2 = new Triangle(0.2f, 0.2f, new Vector(-0.2f, -0.3f));
         private static Rectangle rectangle = new Rectangle(0.3f, 0.2f, new Vector(-0.15f, -0.1f));
         private static Circle circle = new Circle(0.1f, new Vector(0.1f, -0.2f));
         private static Cone cone = new Cone(0.1f, new Vector(-0.1f, -0.2f));
@@ -60,13 +61,13 @@ namespace SharpEngine
             triangle.Move();
             triangle.Rotate();
             
-            // triangle2.Bounce();
-            // triangle2.Move();
-            // triangle2.Rotate();
+            triangle2.Bounce();
+            triangle2.Move();
+            triangle2.Rotate();
             if (triangle.CurrentScale >= 1f) multiplier_tri = 0.999f;
             if (triangle.CurrentScale <= 0.5f) multiplier_tri = 1.001f;
             triangle.Scale(multiplier_tri);
-            //triangle2.Scale(multiplier);
+            triangle2.Scale(multiplier_tri);
             
             rectangle.Bounce();
             rectangle.Move();
@@ -93,7 +94,7 @@ namespace SharpEngine
         private static void Render(Window window)
         {
             triangle.Render();
-            //triangle2.Render();
+            triangle2.Render();
             rectangle.Render();
             circle.Render();
             cone.Render();

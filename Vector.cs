@@ -54,7 +54,7 @@ namespace SharpEngine
             return new Vector(minX, minY);
         }
 
-        public static float operator *(Vector u, Vector v)
+        public static float Dot(Vector u, Vector v)
         {
             return u.x * v.x + u.y * v.y;
         }

@@ -59,12 +59,12 @@ namespace SharpEngine
         {
             float angle = 0.003f;
             var center = GetCenter();
-            Vector rotation1 = new Vector(MathF.Cos(angle), MathF.Sin(angle));
-            Vector rotation2 = new Vector(-MathF.Sin(angle), MathF.Cos(angle));
+            Vector rotationX = new Vector(MathF.Cos(angle), MathF.Sin(angle));
+            Vector rotationY = new Vector(-MathF.Sin(angle), MathF.Cos(angle));
             for (int i = 0; i < this.vertices.Length; i++)
             {
-                Vector vector2 = this.vertices[i].position - center;
-                this.vertices[i].position = new Vector(rotation1 * vector2, rotation2 * vector2) + center;
+                Vector shift = this.vertices[i].position - center;
+                this.vertices[i].position = new Vector(Vector.Dot(rotationX, shift), Vector.Dot(rotationY,shift)) + center;
             }
         }
         
@@ -96,9 +96,9 @@ namespace SharpEngine
             }
         }
 
+        //public virtual unsafe void Render()
         public unsafe void Render()
         {
-            //LoadShapeIntoBuffer();
             fixed (Vertex* vertex = &this.vertices[0])
             {
                 Gl.glBufferData(Gl.GL_ARRAY_BUFFER, sizeof(Vertex) * this.vertices.Length, vertex, Gl.GL_STATIC_DRAW);
@@ -108,6 +108,7 @@ namespace SharpEngine
             Gl.glDrawArrays(Gl.GL_TRIANGLE_FAN, 0, this.vertices.Length);
         }
         
+        //public virtual unsafe void LoadShapeIntoBuffer()
         public unsafe void LoadShapeIntoBuffer()
         {
             // load the vertices into a buffer
@@ -115,6 +116,7 @@ namespace SharpEngine
             var vertexBuffer = glGenBuffer();
             glBindVertexArray(vertexArray);
             glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+
             //glVertexAttribPointer(0, vertexSize, GL_FLOAT, false, vertexSize * sizeof(float), NULL);
             glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), NULL);
             glVertexAttribPointer(1, 4, GL_FLOAT, false, sizeof(Vertex), (void*)sizeof(Vector));

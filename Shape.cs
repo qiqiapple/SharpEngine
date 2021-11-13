@@ -86,12 +86,11 @@ namespace SharpEngine
 
         public void Bounce(float ratio)
         {
-            if (this.GetMaxBounds().x >= ratio && this.velocity.x>0 || this.GetMinBounds().x<=-ratio && this.velocity.x<0)
+            if (this.GetMaxBounds().x>=ratio && this.velocity.x>0 || this.GetMinBounds().x<=-ratio && this.velocity.x<0)
             {
                 this.velocity.x *= -1;
-                float tmp = ratio;
             }
-            if (this.GetMaxBounds().y >= 1 && this.velocity.y>0 || this.GetMinBounds().y<=-1 && this.velocity.y<0)
+            if (this.GetMaxBounds().y>=1 && this.velocity.y>0 || this.GetMinBounds().y<=-1 && this.velocity.y<0)
             {
                 this.velocity.y *= -1;
             }

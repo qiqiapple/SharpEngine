@@ -1,5 +1,5 @@
-﻿using System.IO;
-using System.Xml.Schema;
+﻿using System;
+using System.IO;
 using GLFW;
 using OpenGL;
 using static OpenGL.Gl;
@@ -40,21 +40,17 @@ namespace SharpEngine
         private static float multiplier_rec = 0.999f;
         private static float multiplier_cir = 0.999f;
         private static float multiplier_con = 0.999f;
-
         private static float ratio;
 
         static void Main(string[] args)
         {
             var window = CreateWindow();
             int ratioLocation = CreateShaderProgram();
-            Glfw.GetWindowSize(window, out int width, out int height);
 
             // engine rendering loop
             while (!Glfw.WindowShouldClose(window))
             {
-                ratio = (float) width / height;
-                glUniform1f(ratioLocation, ratio);
-
+                ChangeWindowSize(window, ratioLocation);
                 Glfw.PollEvents();
                 ClearScreen();
                 Render(window);
@@ -62,10 +58,10 @@ namespace SharpEngine
             }
         }
 
-
         private static void Play()
         {
             TrianglePlay();
+            //rectangle.Rotate();
             RectanglePlay();
             CirclePlay();
             ConePlay();
@@ -114,6 +110,15 @@ namespace SharpEngine
             if (cone.CurrentScale <= 0.3f) multiplier_con = 1.001f;
             cone.Scale(multiplier_con);
         }
+        
+        private static void ChangeWindowSize(Window window, int ratioLocation)
+        {
+            Glfw.GetWindowSize(window, out int width, out int height);
+            glViewport(0, 0, width, height);
+            ratio = (float) width / height;
+            glUniform1f(ratioLocation, ratio);
+        }
+
 
         private static void Render(Window window)
         {
@@ -172,5 +177,6 @@ namespace SharpEngine
             Import(Glfw.GetProcAddress);
             return window;
         }
+
     }
 }

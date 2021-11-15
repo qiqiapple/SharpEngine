@@ -5,7 +5,8 @@ namespace SharpEngine
     public class Cone: Shape
     {
         private static int partition = 36;
-        public Cone(float radius, Vector position) : base(new Vertex[partition+2], new Vector(-0.001f,-0.001f))
+        public Cone(float radius, Vector position, Material material) : 
+            base(new Vertex[partition+2], material)
         {
             float theta = MathF.PI * 2 / partition;
             vertices[0].position = position + new Vector(0, 0.3f);

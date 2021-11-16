@@ -59,9 +59,9 @@ namespace SharpEngine
             return new Vector(minX, minY);
         }
 
-        public static float Dot(Vector u, Vector v)
+        public static float Dot(Vector a, Vector b)
         {
-            return u.x * v.x + u.y * v.y;
+            return a.x * b.x + a.y * b.y + a.z + b.z;
         }
 
         public float GetMagnitude()
@@ -79,6 +79,11 @@ namespace SharpEngine
         {
             //return MathF.Acos(Dot(a.Normalize(),b.Normalize())) * 180f / MathF.PI;
             return MathF.Acos(Dot(a.Normalize(),b.Normalize()));
+        }
+
+        public static Vector Cross(Vector a, Vector b)
+        {
+            return new Vector(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.z * b.x);
         }
     }
 }

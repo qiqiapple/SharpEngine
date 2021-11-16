@@ -1,6 +1,7 @@
 ﻿
 
 using System;
+using System.Runtime.CompilerServices;
 
 namespace SharpEngine
 {
@@ -33,11 +34,11 @@ namespace SharpEngine
                               m.m31 * v.x + m.m32 * v.y + m.m33 * v.z + m.m34 * 1);
         }
         
-        public static Vector Transform(Matrix m, Vector v, float w=1f)
+        public static Vector Transform(Matrix m, Vector v, float w = 1f)
         {
             return new Vector(m.m11 * v.x + m.m12 * v.y + m.m13 * v.z + m.m14 * w,
-                m.m21 * v.x + m.m22 * v.y + m.m23 * v.z + m.m24 * w,
-                m.m31 * v.x + m.m32 * v.y + m.m33 * v.z + m.m34 * w);
+                              m.m21 * v.x + m.m22 * v.y + m.m23 * v.z + m.m24 * w,
+                              m.m31 * v.x + m.m32 * v.y + m.m33 * v.z + m.m34 * w);
         }
         
         public static Matrix operator *(Matrix m, Matrix n)
@@ -115,6 +116,38 @@ namespace SharpEngine
         public static Matrix Rotation(Vector rotation)
         {
             return RotationZ(rotation.z) * RotationY(rotation.y) * RotationX(rotation.x);
+        }
+
+        public static Matrix Inverse(Matrix m)
+        {
+            var result = m;
+            var B = new Matrix3x3(m.m11, m.m12, m.m13, m.m21, m.m22, m.m23, m.m31, m.m32, m.m33);
+            var C = new Vector(m.m14, m.m24, m.m34);
+            var inverseB = Matrix3x3.Inverse(B);
+            var result3x1 = inverseB * C * (-1);
+
+            result.m11 = inverseB.m11;
+            result.m12 = inverseB.m12;
+            result.m13 = inverseB.m13;
+            
+            result.m21 = inverseB.m21;
+            result.m22 = inverseB.m22;
+            result.m23 = inverseB.m23;
+            
+            result.m31 = inverseB.m31;
+            result.m32 = inverseB.m32;
+            result.m33 = inverseB.m33;
+
+            result.m14 = result3x1.x;
+            result.m24 = result3x1.y;
+            result.m34 = result3x1.z;
+
+            result.m41 = 0f;
+            result.m42 = 0f;
+            result.m43 = 0f;
+            result.m44 = 1f;
+            
+            return result;
         }
     }
 }

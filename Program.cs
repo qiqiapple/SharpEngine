@@ -105,14 +105,6 @@ namespace SharpEngine
                     {
                         walkDirection += Vector.Backward;
                     }
-                    // if (window.GetKey(Keys.A))
-                    // {
-                    //     walkDirection += Vector.Left;
-                    // }
-                    // if (window.GetKey(Keys.D))
-                    // {
-                    //     walkDirection += Vector.Right;
-                    // }
                     if (window.GetKey(Keys.A))
                     {
                         var rotation = newTriangle.Transform.Rotation;
@@ -134,12 +126,13 @@ namespace SharpEngine
                     var cirDirection = circleChangeColor.GetCenter() - newTriangle.GetCenter();
                     var resultCir = Vector.GetAngle(cirDirection, newTriangle.Transform.Forward);
                     var angleFaceCir = MathF.Atan2(circleChangeColor.Radius, cirDirection.GetMagnitude());
-                    if(resultCir < angleFaceCir) circleChangeColor.SetColor(Color.White);
-                    else circleChangeColor.SetColor(Color.Black);
-                    
+                    if(resultCir < angleFaceCir) circleChangeColor.SetColor(Color.Black);
+                    else circleChangeColor.SetColor(Color.White);
+
                     walkDirection = walkDirection.Normalize();
                     newTriangle.Transform.Position += walkDirection * movementSpeed * fixedDeltaTime;
                     glUniform1f(ratioLocation, window.WindowAspectRatio);
+
                 }
                 window.Render();
             }

@@ -112,6 +112,14 @@ namespace SharpEngine
             }
         }
 
+        public void SetColor(Color color)
+        {
+            for (int i = 0; i < this.vertices.Length; i++)
+            {
+                vertices[i].color = color;
+            }
+        }
+
         //public virtual unsafe void Render()
         public unsafe void Render()
         {

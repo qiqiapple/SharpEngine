@@ -5,6 +5,11 @@ namespace SharpEngine
     public struct Vector
     {
         public float x, y, z;
+        public static Vector Forward => new Vector(0, 1);
+        public static Vector Backward => new Vector(0, -1);
+        public static Vector Right => new Vector(1, 0);
+        public static Vector Left => new Vector(-1, 0);
+        public static Vector Zero => new Vector(0,  0);
 
         public Vector(float x, float y, float z)
         {
@@ -67,7 +72,13 @@ namespace SharpEngine
         public Vector Normalize()
         {
             var magnitude = GetMagnitude();
-            return magnitude>0? this/ GetMagnitude() : this;
+            return magnitude > 0 ? this/ GetMagnitude() : this;
+        }
+
+        public static float GetAngle(Vector a, Vector b)
+        {
+            //return MathF.Acos(Dot(a.Normalize(),b.Normalize())) * 180f / MathF.PI;
+            return MathF.Acos(Dot(a.Normalize(),b.Normalize()));
         }
     }
 }

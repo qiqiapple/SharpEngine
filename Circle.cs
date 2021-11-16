@@ -4,9 +4,12 @@ namespace SharpEngine
     public class Circle: Shape
     {
         private static int partition = 36;
+        public float Radius { get; private set; }
+
         public Circle(float radius, Vector position, Material material) : 
             base(new Vertex[partition+2], material)
         {
+            Radius = radius;
             float theta = MathF.PI * 2 / partition;
             vertices[0].position = position;
             vertices[0].color = Color.Yellow;

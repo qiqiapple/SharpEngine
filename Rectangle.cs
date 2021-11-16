@@ -5,7 +5,23 @@ namespace SharpEngine
     public class Rectangle : Shape
     {
         //Indices[] indices = new Indices[]{new Indices(0),new Indices(1),new Indices(2),new Indices(0),new Indices(2),new Indices(3)};
-    
+
+        public Rectangle(Vertex[] vertices, Material material): base(new Vertex[4], material)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                vertices[i].position = this.vertices[i].position;
+            }
+
+            vertices[3].position = this.vertices[0].position + this.vertices[2].position - this.vertices[1].position;
+            vertices[0].color = Color.Red;
+            vertices[1].color = Color.Green;
+            vertices[2].color = Color.Blue;
+            vertices[3].color = Color.Yellow;
+        }
+        
+
+        
         public Rectangle(float width, float height, Vector position, Material material) : 
             base(new Vertex[4], material)
         {
@@ -13,6 +29,21 @@ namespace SharpEngine
             vertices[1] = new Vertex(new Vector(position.x + width / 2, position.y - height / 2), Color.Green);
             vertices[2] = new Vertex(new Vector(position.x + width / 2, position.y + height / 2), Color.Blue);
             vertices[3] = new Vertex(new Vector(position.x - width / 2, position.y + height / 2), Color.Yellow);
+        }
+        
+        public Rectangle(Material material) : base(CreateRectangle(), material) {
+        }
+
+        static Vertex[] CreateRectangle() {
+            const float scale = .1f;
+            return new Vertex[] {
+                new Vertex(new Vector(-scale, -scale), Color.Red), // LB
+                new Vertex(new Vector(scale, -scale), Color.Green), // RB
+                new Vertex(new Vector(-scale, scale), Color.Blue), // LT
+                new Vertex(new Vector(scale, -scale), Color.Green), // RB
+                new Vertex(new Vector(scale, scale), Color.Red), // RT
+                new Vertex(new Vector(-scale, scale), Color.Blue) // LT
+            };
         }
         
         // public override unsafe void Render()

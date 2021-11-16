@@ -10,9 +10,6 @@
                 this.vertices[i].position = vertices[i].position;
                 this.vertices[i].color = vertices[i].color;
             }
-            
-            
-            
         }
         public Triangle(float width, float height, Vector position, Material material) : base(new Vertex[3],
             material)

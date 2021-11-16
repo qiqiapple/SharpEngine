@@ -9,21 +9,22 @@ namespace SharpEngine
     public class Shape
     {
         public Vertex[] vertices;
-        private Matrix transform = Matrix.Identity;
         private uint vertexArray;
         private uint vertexBuffer;
         public Vector direction;
         
-        public float CurrentScale { get; private set; }
+        //public float CurrentScale { get; private set; }
+        public Transform Transform { get; }
         public Material material;
         
         public Shape(Vertex[] vertices, Material material)
         {
             this.vertices = vertices;
             this.material = material;
-            this.CurrentScale = 1f;
-            this.direction = new Vector(0.003f, 0.002f);
+            //this.CurrentScale = 1f;
+            this.direction = new Vector(0.01f, 0.01f);
             LoadShapeIntoBuffer();
+            this.Transform = new Transform();
         }
         
         //public virtual unsafe void LoadShapeIntoBuffer()
@@ -53,12 +54,11 @@ namespace SharpEngine
             // {
             //     min = Vector.Min(min, this.vertices[i].position);
             // }
-            var min = this.transform * vertices[0].position;
+            var min = this.Transform.Matrix * vertices[0].position;
             for (int i = 1; i < this.vertices.Length; i++)
             {
-                min = Vector.Min(min, this.transform * this.vertices[i].position);
+                min = Vector.Min(min, this.Transform.Matrix * this.vertices[i].position);
             }
-
             return min;
         }
         
@@ -69,12 +69,11 @@ namespace SharpEngine
             // {
             //     max = Vector.Max(max, this.vertices[i].position);
             // }
-            var max = this.transform * vertices[0].position;
+            var max = this.Transform.Matrix * vertices[0].position;
             for (int i = 1; i < this.vertices.Length; i++)
             {
-                max = Vector.Max(max, this.transform * this.vertices[i].position);
+                max = Vector.Max(max, this.Transform.Matrix * this.vertices[i].position);
             }
-            
             return max;
         }
 
@@ -83,58 +82,24 @@ namespace SharpEngine
             return (GetMinBounds() + GetMaxBounds()) / 2;
         }
 
-        public void Scale(float multiplier)
-        {
-            // var offset = GetCenter();
-            // Matrix matrix = Matrix.Scale(new Vector(multiplier,multiplier));
-            // for (int i = 0; i < this.vertices.Length; i++)
-            // {
-            //     //this.vertices[i].position = (this.vertices[i].position - center) * multiplier + center;
-            //     this.vertices[i].position = matrix * (this.vertices[i].position - offset) + offset;
-            // }
-
-            Move(GetCenter()*(-1));
-            this.transform = Matrix.Scale(new Vector(multiplier,multiplier)) * this.transform;
-            Move(GetCenter());
-            this.CurrentScale *= multiplier;
-        }
-        
-        public void Rotate()
-        {
-            float angle = 0.003f;
-            var offset = GetCenter();
-            // Vector rotationX = new Vector(MathF.Cos(angle), MathF.Sin(angle));
-            // Vector rotationY = new Vector(-MathF.Sin(angle), MathF.Cos(angle));
-            // for (int i = 0; i < this.vertices.Length; i++)
-            // {
-            //     Vector shift = this.vertices[i].position - offset;
-            //     this.vertices[i].position = new Vector(Vector.Dot(rotationX, shift), Vector.Dot(rotationY,shift)) + offset;
-            // }
-            Matrix matrix = Matrix.Rotate(angle);
-            for (int i = 0; i < this.vertices.Length; i++)
-            {
-                this.vertices[i].position = matrix * (this.vertices[i].position - offset) + offset;
-            }
-        }
-        
-        // public void Move()
+        // public void Rotate()
         // {
+        //     float angle = 0.003f;
+        //     var offset = GetCenter();
+        //     // Vector rotationX = new Vector(MathF.Cos(angle), MathF.Sin(angle));
+        //     // Vector rotationY = new Vector(-MathF.Sin(angle), MathF.Cos(angle));
+        //     // for (int i = 0; i < this.vertices.Length; i++)
+        //     // {
+        //     //     Vector shift = this.vertices[i].position - offset;
+        //     //     this.vertices[i].position = new Vector(Vector.Dot(rotationX, shift), Vector.Dot(rotationY,shift)) + offset;
+        //     // }
+        //     Matrix matrix = Matrix.Rotate(angle);
         //     for (int i = 0; i < this.vertices.Length; i++)
         //     {
-        //         this.vertices[i].position += this.velocity;         
+        //         this.vertices[i].position = matrix * (this.vertices[i].position - offset) + offset;
         //     }
         // }
-
-        public void Move()
-        {
-           this.transform = Matrix.Translation(direction) * this.transform;
-        }
         
-        public void Move(Vector direction)
-        {
-            this.transform = Matrix.Translation(direction) * this.transform;
-        }
-
         public void Bounce(float ratio)
         {
             if (this.GetMaxBounds().x>=ratio && direction.x>0 || this.GetMinBounds().x<=-ratio && direction.x<0)
@@ -151,7 +116,7 @@ namespace SharpEngine
         public unsafe void Render()
         {
             this.material.Use();
-            this.material.SetTransform(this.transform);
+            this.material.SetTransform(this.Transform.Matrix);
             glBindVertexArray(vertexArray);
             glBindBuffer(GL_ARRAY_BUFFER, this.vertexBuffer);
             fixed (Vertex* vertex = &this.vertices[0])
@@ -159,9 +124,9 @@ namespace SharpEngine
                 //Gl.glBufferData(Gl.GL_ARRAY_BUFFER, sizeof(Vertex) * this.vertices.Length, vertex, Gl.GL_STATIC_DRAW);
                 glBufferData(GL_ARRAY_BUFFER, Marshal.SizeOf<Vertex>() * this.vertices.Length, vertex, GL_DYNAMIC_DRAW);
             }
-            Gl.glDrawArrays(Gl.GL_TRIANGLES, 0, this.vertices.Length);
+            //Gl.glDrawArrays(Gl.GL_TRIANGLES, 0, this.vertices.Length);
             //Gl.glDrawArrays(Gl.GL_TRIANGLE_STRIP, 0, this.vertices.Length);
-            //Gl.glDrawArrays(Gl.GL_TRIANGLE_FAN, 0, this.vertices.Length);
+            Gl.glDrawArrays(Gl.GL_TRIANGLE_FAN, 0, this.vertices.Length);
             glBindVertexArray(0);
         }
         

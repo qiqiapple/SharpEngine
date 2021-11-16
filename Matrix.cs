@@ -29,8 +29,8 @@ namespace SharpEngine
         public static Vector operator *(Matrix m, Vector v)
         {
             return new Vector(m.m11 * v.x + m.m12 * v.y + m.m13 * v.z + m.m14 * 1,
-                              m.m21 * v.x + m.m22 * v.y + m.m23 * v.z + m.m14 * 1,
-                              m.m31 * v.x + m.m32 * v.y + m.m33 * v.z + m.m14 * 1);
+                              m.m21 * v.x + m.m22 * v.y + m.m23 * v.z + m.m24 * 1,
+                              m.m31 * v.x + m.m32 * v.y + m.m33 * v.z + m.m34 * 1);
         }
         
         public static Matrix operator *(Matrix m, Matrix n)
@@ -75,7 +75,27 @@ namespace SharpEngine
             return result;
         }
 
-        public static Matrix Rotate(float theta)
+        private static Matrix RotationX(float theta)
+        {
+            var result = Identity;
+            result.m22 = MathF.Cos(theta);
+            result.m23 = -MathF.Sin(theta);
+            result.m32 = MathF.Sin(theta);
+            result.m33 = MathF.Cos(theta);
+            return result;
+        }
+
+        private static Matrix RotationY(float theta)
+        {
+            var result = Identity;
+            result.m11 = MathF.Cos(theta);
+            result.m13 = MathF.Sin(theta);
+            result.m31 = -MathF.Sin(theta);
+            result.m33 = MathF.Cos(theta);
+            return result;
+        }
+
+        private static Matrix RotationZ(float theta)
         {
             var result = Identity;
             result.m11 = MathF.Cos(theta);
@@ -83,6 +103,11 @@ namespace SharpEngine
             result.m21 = MathF.Sin(theta);
             result.m22 = MathF.Cos(theta);
             return result;
+        }
+
+        public static Matrix Rotation(Vector rotation)
+        {
+            return RotationZ(rotation.z) * RotationY(rotation.y) * RotationX(rotation.x);
         }
     }
 }

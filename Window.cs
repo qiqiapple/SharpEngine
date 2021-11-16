@@ -27,7 +27,7 @@ namespace SharpEngine
             Glfw.WindowHint(Hint.Doublebuffer, Constants.True);
 
             // create and launch a window
-            window = Glfw.CreateWindow(1024, 768, "SharpEngine", Monitor.None, GLFW.Window.None);
+            window = Glfw.CreateWindow(768, 768, "SharpEngine", Monitor.None, GLFW.Window.None);
             Glfw.MakeContextCurrent(window);
             OpenGL.Gl.Import(Glfw.GetProcAddress);
         }
@@ -56,6 +56,11 @@ namespace SharpEngine
             Glfw.GetWindowSize(window, out windowWidth, out windowHeight);
             glViewport(0, 0, windowWidth, windowHeight);
             WindowAspectRatio = (float) windowWidth / windowHeight;
+        }
+
+        public bool GetKey(Keys key)
+        {
+            return Glfw.GetKey(this.window, key) == InputState.Press;
         }
     }
     

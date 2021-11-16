@@ -58,5 +58,16 @@ namespace SharpEngine
         {
             return u.x * v.x + u.y * v.y;
         }
+
+        public float GetMagnitude()
+        {
+            return MathF.Sqrt(x * x + y * y + z * z);
+        }
+
+        public Vector Normalize()
+        {
+            var magnitude = GetMagnitude();
+            return magnitude>0? this/ GetMagnitude() : this;
+        }
     }
 }

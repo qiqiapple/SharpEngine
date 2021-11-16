@@ -9,7 +9,8 @@ uniform mat4 transform;
 
 void main()
 {
-    gl_Position = transform * vec4(pos.x/aspectRatio, pos.y, pos.z, 1.0);
-    //gl_Position = transform * vec4(pos.x, pos.y, pos.z, 1.0);
+    //gl_Position = transform * vec4(pos.x/aspectRatio, pos.y, pos.z, 1.0);
+    gl_Position = transform * vec4(pos.x, pos.y, pos.z, 1.0);
+    gl_Position.x /= aspectRatio;
     vertexColor = color;
 }

@@ -124,7 +124,7 @@ namespace SharpEngine
             var B = new Matrix3x3(m.m11, m.m12, m.m13, m.m21, m.m22, m.m23, m.m31, m.m32, m.m33);
             var C = new Vector(m.m14, m.m24, m.m34);
             var inverseB = Matrix3x3.Inverse(B);
-            var result3x1 = inverseB * C * (-1);
+            var result3x1 = inverseB * C * (-1); //-inv(B)*C*inv(D)
 
             result.m11 = inverseB.m11;
             result.m12 = inverseB.m12;

@@ -17,6 +17,9 @@
         public static Matrix3x3 Identity => new Matrix3x3(1, 0, 0,
                                                           0, 1, 0,
                                                           0, 0, 1);
+        public static Matrix3x3 Zero => new Matrix3x3(0, 0, 0,
+                                                      0, 0, 0,
+                                                      0, 0, 0);
 
         public static Matrix3x3 DotDivide(Matrix3x3 a, float f)
         {
@@ -39,7 +42,7 @@
                    m.m11 * m.m23 * m.m32 - m.m12 * m.m21 * m.m33 - m.m13 * m.m22 * m.m31;
         }
 
-        public static Matrix3x3 Adjugate(Matrix3x3 a)
+        public static Matrix3x3 Adjoint(Matrix3x3 a)
         {
             var b = Identity;
             b.m11 = (a.m22 * a.m33 - a.m32 * a.m23);
@@ -59,9 +62,12 @@
         public static Matrix3x3 Inverse(Matrix3x3 a)
         {
             var aDeterminant = Determinant(a);
-            var aAdjugate = Adjugate(a);
-            
-            var result = DotDivide(aAdjugate, aDeterminant);
+            if (aDeterminant == 0)
+            {
+                return Zero;
+            }
+            var aAdjoint = Adjoint(a);
+            var result = DotDivide(aAdjoint, aDeterminant);
             return result;
         }
     }

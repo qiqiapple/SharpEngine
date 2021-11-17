@@ -67,11 +67,16 @@ namespace SharpEngine
 
             var rectangleChangeColor= new Rectangle(material);
             rectangleChangeColor.Transform.CurrentScale = new Vector(2f, 1f, 1f);
-            rectangleChangeColor.Transform.Position = new Vector(0f, -0.5f);
+            rectangleChangeColor.Transform.Position = new Vector(0f, -0.7f);
+            rectangleChangeColor.SetColor(Color.Red);
             scene.Add(rectangleChangeColor);
             
-            var circleChangeColor = new Circle(0.1f, new Vector(0.5f, 0.5f), material);
+            var circleChangeColor = new Circle(0.1f, new Vector(0.7f, 0.7f), material);
             scene.Add(circleChangeColor);
+            circleChangeColor.SetColor(Color.White);
+            var circleInterpolate = new Circle(0.1f, new Vector(-0.7f, 0.7f), material);
+            scene.Add(circleInterpolate);
+            circleInterpolate.SetColor(Color.White);
 
             var ratioLocation = material.ratioLocation;
             const int fixedStepNumberPerSecond = 30;
@@ -103,15 +108,23 @@ namespace SharpEngine
                     }
                     if (window.GetKey(Keys.S))
                     {
-                        walkDirection += Vector.Backward;
+                        walkDirection += newTriangle.Transform.Backward;
                     }
                     if (window.GetKey(Keys.A))
+                    {
+                        walkDirection += newTriangle.Transform.Left;
+                    }
+                    if (window.GetKey(Keys.D))
+                    {
+                        walkDirection += newTriangle.Transform.Right;
+                    }
+                    if (window.GetKey(Keys.Q))
                     {
                         var rotation = newTriangle.Transform.Rotation;
                         rotation.z += MathF.PI * fixedDeltaTime;
                         newTriangle.Transform.Rotation = rotation;
                     }
-                    if (window.GetKey(Keys.D))
+                    if (window.GetKey(Keys.E))
                     {
                         var rotation = newTriangle.Transform.Rotation;
                         rotation.z -= MathF.PI * fixedDeltaTime;
@@ -128,6 +141,10 @@ namespace SharpEngine
                     var angleFaceCir = MathF.Atan2(circleChangeColor.Radius, cirDirection.GetMagnitude());
                     if(resultCir < angleFaceCir) circleChangeColor.SetColor(Color.Black);
                     else circleChangeColor.SetColor(Color.White);
+
+                    var cirDirectionInter = circleInterpolate.GetCenter() - newTriangle.GetCenter();
+                    var resultCirInter = Vector.GetAngle(cirDirectionInter, newTriangle.Transform.Forward);
+                    circleInterpolate.SetColor(new Color(resultCirInter, resultCirInter, resultCirInter, 1));
 
                     walkDirection = walkDirection.Normalize();
                     newTriangle.Transform.Position += walkDirection * movementSpeed * fixedDeltaTime;

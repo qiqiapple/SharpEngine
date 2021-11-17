@@ -12,11 +12,28 @@ namespace SharpEngine
         private uint vertexArray;
         private uint vertexBuffer;
         public Vector direction;
-        
+        public Vector velocity;
+        public Vector linearForce;
+        public float gravityScale = 1f;
+
         //public float CurrentScale { get; private set; }
         public Transform Transform { get; }
         public Material material;
-        
+        private float mass;
+        private float massInverse;
+
+        public float Mass
+        {
+            get => this.mass;
+            set
+            {
+                this.mass = value;
+                this.massInverse = float.IsPositiveInfinity(value) ? 0f : 1f / value;
+            }
+        }
+
+        public float MassInverse => this.massInverse;
+
         public Shape(Vertex[] vertices, Material material)
         {
             this.vertices = vertices;
@@ -48,12 +65,6 @@ namespace SharpEngine
 
         public Vector GetMinBounds()
         {
-            
-            // var min = this.vertices[0].position;
-            // for (int i = 0; i < this.vertices.Length; i++)
-            // {
-            //     min = Vector.Min(min, this.vertices[i].position);
-            // }
             var min = this.Transform.Matrix * vertices[0].position;
             for (int i = 1; i < this.vertices.Length; i++)
             {
@@ -64,11 +75,6 @@ namespace SharpEngine
         
         public Vector GetMaxBounds()
         {
-            // var max = this.vertices[0].position;
-            // for (int i = 0; i < this.vertices.Length; i++)
-            // {
-            //     max = Vector.Max(max, this.vertices[i].position);
-            // }
             var max = this.Transform.Matrix * vertices[0].position;
             for (int i = 1; i < this.vertices.Length; i++)
             {
@@ -82,24 +88,6 @@ namespace SharpEngine
             return (GetMinBounds() + GetMaxBounds()) / 2;
         }
 
-        // public void Rotate()
-        // {
-        //     float angle = 0.003f;
-        //     var offset = GetCenter();
-        //     // Vector rotationX = new Vector(MathF.Cos(angle), MathF.Sin(angle));
-        //     // Vector rotationY = new Vector(-MathF.Sin(angle), MathF.Cos(angle));
-        //     // for (int i = 0; i < this.vertices.Length; i++)
-        //     // {
-        //     //     Vector shift = this.vertices[i].position - offset;
-        //     //     this.vertices[i].position = new Vector(Vector.Dot(rotationX, shift), Vector.Dot(rotationY,shift)) + offset;
-        //     // }
-        //     Matrix matrix = Matrix.Rotate(angle);
-        //     for (int i = 0; i < this.vertices.Length; i++)
-        //     {
-        //         this.vertices[i].position = matrix * (this.vertices[i].position - offset) + offset;
-        //     }
-        // }
-        
         public void Bounce(float ratio)
         {
             if (this.GetMaxBounds().x>=ratio && direction.x>0 || this.GetMinBounds().x<=-ratio && direction.x<0)

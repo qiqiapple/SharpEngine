@@ -30,6 +30,11 @@ namespace SharpEngine
         {
             return new Vector(v.x * f, v.y * f, v.z * f);
         }
+        
+        public static Vector operator *(float f, Vector v)
+        {
+            return new Vector(v.x * f, v.y * f, v.z * f);
+        }
 
         public static Vector operator /(Vector v, float f)
         {
@@ -67,7 +72,13 @@ namespace SharpEngine
 
         public float GetMagnitude()
         {
+            //return MathF.Sqrt(GetSquareMagnitude());
             return MathF.Sqrt(x * x + y * y + z * z);
+        }
+        
+        public float GetSquareMagnitude()
+        {
+            return x * x + y * y + z * z;
         }
 
         public Vector Normalize()

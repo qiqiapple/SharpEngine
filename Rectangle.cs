@@ -4,6 +4,7 @@ namespace SharpEngine
 {
     public class Rectangle : Shape
     {
+        public float width, height;
         //Indices[] indices = new Indices[]{new Indices(0),new Indices(1),new Indices(2),new Indices(0),new Indices(2),new Indices(3)};
 
         public Rectangle(Vertex[] vertices, Material material): base(new Vertex[4], material)
@@ -18,6 +19,9 @@ namespace SharpEngine
             vertices[1].color = Color.Green;
             vertices[2].color = Color.Blue;
             vertices[3].color = Color.Yellow;
+
+            this.width = (vertices[1].position - vertices[0].position).GetMagnitude();
+            this.height = (vertices[1].position - vertices[2].position).GetMagnitude();
         }
         
 
@@ -29,9 +33,14 @@ namespace SharpEngine
             vertices[1] = new Vertex(new Vector(position.x + width / 2, position.y - height / 2), Color.Green);
             vertices[2] = new Vertex(new Vector(position.x + width / 2, position.y + height / 2), Color.Blue);
             vertices[3] = new Vertex(new Vector(position.x - width / 2, position.y + height / 2), Color.Yellow);
+            this.width = width;
+            this.height = height;
         }
         
-        public Rectangle(Material material) : base(CreateRectangle(), material) {
+        public Rectangle(Material material) : base(CreateRectangle(), material)
+        {
+            this.width = 0.2f;
+            this.height = 0.2f;
         }
 
         static Vertex[] CreateRectangle() {

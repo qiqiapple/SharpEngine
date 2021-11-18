@@ -24,6 +24,7 @@ namespace SharpEngine
             var material = new Material("shaders/world-position-color.vert", "shaders/vertex-color.frag");
             var scene = new Scene();
             var physics = new Physics(scene);
+            var camera = new Camera();
             window.Load(scene);
 
             // var ground = new Rectangle(material);
@@ -33,7 +34,7 @@ namespace SharpEngine
             // ground.gravityScale = 0f;
             // scene.Add(ground);
             // var rectangle = new Rectangle(material);
-            // rectangle.Transform.Position = Vector.Left + Vector.Backward * 0.2f;
+            // rectangle.Transform.Position = Vector.Left * 0.2f + Vector.Backward * 0.2f;
             // rectangle.linearForce = Vector.Right * 0.3f;
             // rectangle.Mass = 4f;
             // scene.Add(rectangle);
@@ -42,11 +43,20 @@ namespace SharpEngine
                 var radius = GetRandomFloat(random, 0.3f);
                 var position = new Vector(GetRandomFloat(random, -1f), GetRandomFloat(random, -1f));
                 var circle = new Circle(position, material);
+                //var circle = new Circle(material);
+                //circle.Transform.Position = position;
                 circle.Transform.CurrentScale = new Vector(radius,radius,1f);
-                circle.velocity= position.Normalize() * (-1) * GetRandomFloat(random, 0.15f, 0.3f);
+                circle.velocity = (-1) * GetRandomFloat(random, 0.15f, 0.3f) * position.Normalize();
                 circle.Mass = MathF.PI * radius * radius;
                 scene.Add(circle);
             }
+            // for (int i = 0; i < 2; i++)
+            // {
+            //     var rectangle = new Rectangle(material);
+            //     rectangle.Transform.Position = Vector.Left * 0.2f + Vector.Backward * 0.2f;
+            //     rectangle.Mass = 4f;
+            //     scene.Add(rectangle);
+            // }
 
             var ratioLocation = material.ratioLocation;
             const int fixedStepNumberPerSecond = 30;
@@ -65,6 +75,39 @@ namespace SharpEngine
                     glUniform1f(ratioLocation, window.WindowAspectRatio);
                 }
                 window.Render();
+                float viewScale = 1f;
+                if (window.GetKey(Keys.M))
+                {
+                    viewScale *= 0.99f;
+                    camera.ZoomInOut(viewScale);
+                }
+                if (window.GetKey(Keys.N))
+                {
+                    viewScale *= 1.01f;
+                    camera.ZoomInOut(viewScale);
+                }
+                if (window.GetKey(Keys.A))
+                {
+                    Vector moveVec = new Vector(0.01f, 0, 0);
+                    camera.MoveCamera(moveVec);
+                }
+                if (window.GetKey(Keys.D))
+                {
+                    Vector moveVec = new Vector(-0.01f, 0, 0);
+                    camera.MoveCamera(moveVec);
+                }
+                if (window.GetKey(Keys.W))
+                {
+                    Vector moveVec = new Vector(0, -0.01f, 0);
+                    camera.MoveCamera(moveVec);
+                }
+                if (window.GetKey(Keys.S))
+                {
+                    Vector moveVec = new Vector(0, 0.01f, 0);
+                    camera.MoveCamera(moveVec);
+                }
+       
+                material.SetViewTransform(camera.viewMatrix);
             }
         }
     }

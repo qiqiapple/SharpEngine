@@ -43,10 +43,6 @@ namespace SharpEngine
             Glfw.PollEvents();
             ClearScreen();
             this.scene?.Render();
-            // triangle.Render();
-            // rectangle.Render();
-            // circle.Render();
-            // cone.Render();
             ChangeWindowSize();
             Glfw.SwapBuffers(window);
         }

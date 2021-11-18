@@ -12,15 +12,10 @@ namespace SharpEngine
         private uint vertexArray;
         private uint vertexBuffer;
         public Vector direction;
-        public Vector velocity;
-        public Vector linearForce;
-        public float gravityScale = 1f;
-
-        //public float CurrentScale { get; private set; }
         public Transform Transform { get; }
         public Material material;
-        private float mass;
-        private float massInverse;
+        private float mass = 1;
+        private float massInverse = 1;
 
         public float Mass
         {
@@ -33,6 +28,9 @@ namespace SharpEngine
         }
 
         public float MassInverse => this.massInverse;
+        public float gravityScale = 1f;
+        public Vector velocity;
+        public Vector linearForce;
 
         public Shape(Vertex[] vertices, Material material)
         {

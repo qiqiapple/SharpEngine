@@ -72,8 +72,8 @@ namespace SharpEngine
 
         public float GetMagnitude()
         {
-            //return MathF.Sqrt(GetSquareMagnitude());
-            return MathF.Sqrt(x * x + y * y + z * z);
+            return MathF.Sqrt(GetSquareMagnitude());
+            //return MathF.Sqrt(x * x + y * y + z * z);
         }
         
         public float GetSquareMagnitude()

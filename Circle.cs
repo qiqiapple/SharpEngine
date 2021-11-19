@@ -3,12 +3,13 @@ namespace SharpEngine
 {
     public class Circle: Shape
     {
-        public float Radius => 0.1f * Transform.CurrentScale.x;
+        public float Radius; // => 0.1f * Transform.CurrentScale.x;
         private static int partition = 16;
 
-        public Circle(Vector position, Material material) : 
+        public Circle(float radius, Vector position, Material material) : 
             base(new Vertex[partition+2], material)
         {
+            this.Radius = radius;
             float theta = MathF.PI * 2 / partition;
             vertices[0].position = position;
             vertices[0].color = Color.Yellow;

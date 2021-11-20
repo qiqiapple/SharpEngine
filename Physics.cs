@@ -6,7 +6,6 @@ namespace SharpEngine
     public class Physics
     {
         private readonly Scene scene;
-
         public Physics(Scene scene)
         {
             this.scene = scene;
@@ -92,15 +91,20 @@ namespace SharpEngine
 
         private static void CircleCollision(Circle shape, Circle other)
         {
+            //Vector deltaPosition = other.Transform.Position - shape.Transform.Position;
             Vector deltaPosition = other.GetCenter() - shape.GetCenter();
-            float squareOverlap = deltaPosition.GetSquareMagnitude() - MathF.Pow(shape.Radius + other.Radius, 2);
-            if (squareOverlap < 0)
+            float squareOverlap = MathF.Pow(shape.Radius + other.Radius, 2) - deltaPosition.GetSquareMagnitude();
+            if (squareOverlap > 0)
             {
-                float overlap = MathF.Sqrt(-squareOverlap);
+                float overlap = MathF.Sqrt(squareOverlap);
+                float totalMass = shape.Mass + other.Mass;
                 Vector collisionNormal = deltaPosition.Normalize();
+                shape.Transform.Position -= overlap * other.Mass / totalMass * collisionNormal;
+                other.Transform.Position += overlap * shape.Mass / totalMass * collisionNormal;
+                
                 Vector shapeVelocity = Vector.Dot(shape.velocity, collisionNormal) * collisionNormal;
                 Vector otherVelocity = Vector.Dot(other.velocity, collisionNormal) * collisionNormal;
-                float totalMass = shape.Mass + other.Mass;
+
                 Vector velocityChange = 2 * other.Mass / totalMass * (otherVelocity - shapeVelocity);
                 Vector otherVelocityChange = (-1) * shape.Mass / other.Mass * velocityChange;
                 //Vector otherVelocityChange = 2 * shape.Mass / totalMass * (shapeVelocity - otherVelocity);
@@ -110,8 +114,6 @@ namespace SharpEngine
             
                 shape.velocity += velocityChange;
                 other.velocity += otherVelocityChange;
-                shape.Transform.Position -= overlap * other.Mass / totalMass * collisionNormal;
-                other.Transform.Position += overlap * shape.Mass / totalMass * collisionNormal;
 
                 //v1' = (m1-m2)/(m1+m2) * v1 + 2*m2/(m1+m2) * v2
                 //v2' = 2*m1/(m1+m2) * v1 + (m1-m2)/(m1+m2) * v2
@@ -120,52 +122,53 @@ namespace SharpEngine
         
         private static void CirRecCollision(Circle shape, Rectangle other)
         {
+            //Vector deltaPosition = other.Transform.Position - shape.Transform.Position;
             Vector deltaPosition = other.GetCenter() - shape.GetCenter();
-            float squareOverlapX = MathF.Pow(deltaPosition.x, 2) - MathF.Pow(shape.Radius + other.width/2f, 2);
-            float squareOverlapY = MathF.Pow(deltaPosition.y, 2) - MathF.Pow(shape.Radius + other.height/2f, 2);
+            float squareOverlapX = MathF.Pow(shape.Radius + other.width/2f, 2) - MathF.Pow(deltaPosition.x, 2);
+            float squareOverlapY = MathF.Pow(shape.Radius + other.height/2f, 2) - MathF.Pow(deltaPosition.y, 2);
             
-            if (squareOverlapX < 0 && squareOverlapY < 0)
+            if (squareOverlapX > 0 && squareOverlapY > 0)
             {
-                float overlapX = MathF.Sqrt(-squareOverlapX);
-                float overlapY = MathF.Sqrt(-squareOverlapY);
+                float overlapX = MathF.Sqrt(squareOverlapX);
+                float overlapY = MathF.Sqrt(squareOverlapY);
+                float totalMass = shape.Mass + other.Mass;
                 Vector collisionNormal = deltaPosition.Normalize();
+
+                float overlap = overlapX < overlapY ? overlapX : overlapY;
+                shape.Transform.Position -= overlap * other.Mass / totalMass * collisionNormal;
+                other.Transform.Position += overlap * shape.Mass / totalMass * collisionNormal;
+                
                 Vector shapeVelocity = Vector.Dot(shape.velocity, collisionNormal) * collisionNormal;
                 Vector otherVelocity = Vector.Dot(other.velocity, collisionNormal) * collisionNormal;
-                float totalMass = shape.Mass + other.Mass;
                 Vector velocityChange = 2 * other.Mass / totalMass * (otherVelocity - shapeVelocity);
                 Vector otherVelocityChange = (-1) * shape.Mass / other.Mass * velocityChange;
                 AssertPhysicalCorrectness(shape.Mass,shape.velocity,shape.velocity + velocityChange, 
                     other.Mass,other.velocity,other.velocity + otherVelocityChange);
                 shape.velocity += velocityChange;
                 other.velocity += otherVelocityChange;
-                // shape.Transform.Position -= new Vector(overlapX * (other.Mass / totalMass * collisionNormal).x, 
-                //     overlapY * (other.Mass / totalMass * collisionNormal).y);
-                // other.Transform.Position += new Vector(overlapX * (shape.Mass / totalMass * collisionNormal).x,
-                //         overlapY*(shape.Mass / totalMass * collisionNormal).y);
-                shape.Transform.Position -= 0.01f * other.Mass / totalMass * collisionNormal;
-                other.Transform.Position += 0.01f * shape.Mass / totalMass * collisionNormal;
             }
-            
-                
-            
         }
         private static void RecRecCollision(Rectangle shape, Rectangle other)
         {
+            //Vector deltaPosition = other.Transform.Position - shape.Transform.Position;
             Vector deltaPosition = other.GetCenter() - shape.GetCenter();
-            float squareOverlapX = MathF.Pow(deltaPosition.x,2) - MathF.Pow(shape.width/2f + other.width/2f,2);
-            float squareOverlapY = MathF.Pow(deltaPosition.y,2) - MathF.Pow(shape.height/2f + other.height/2f,2);
-            if (squareOverlapX < 0 && squareOverlapY < 0)
+            float squareOverlapX = MathF.Pow(shape.width/2f + other.width/2f,2) - MathF.Pow(deltaPosition.x,2);
+            float squareOverlapY = MathF.Pow(shape.height/2f + other.height/2f,2) - MathF.Pow(deltaPosition.y,2);
+            if (squareOverlapX > 0 && squareOverlapY > 0)
             {
+                float overlapX = MathF.Sqrt(squareOverlapX);
+                float overlapY = MathF.Sqrt(squareOverlapY);
+                float totalMass = shape.Mass + other.Mass;
                 Vector collisionNormal = deltaPosition.Normalize();
+                float overlap = overlapX < overlapY ? overlapX : overlapY;
+                shape.Transform.Position -= overlap * other.Mass / totalMass * collisionNormal;
+                other.Transform.Position += overlap * shape.Mass / totalMass * collisionNormal;
                 Vector shapeVelocity = collisionNormal * Vector.Dot(shape.velocity, collisionNormal);
                 Vector otherVelocity = collisionNormal * Vector.Dot(other.velocity, collisionNormal);
-                float totalMass = shape.Mass + other.Mass;
                 Vector velocityChange = 2 * other.Mass / totalMass * (otherVelocity - shapeVelocity);
                 Vector otherVelocityChange = shape.Mass / other.Mass * (-1) * velocityChange;
                 shape.velocity += velocityChange;
                 other.velocity += otherVelocityChange;
-                shape.Transform.Position -= 0.01f * other.Mass / totalMass * collisionNormal;
-                other.Transform.Position += 0.01f * shape.Mass / totalMass * collisionNormal;
             }
         }
         

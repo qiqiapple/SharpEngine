@@ -4,23 +4,21 @@ namespace SharpEngine
 {
     public class Camera
     {
-        public Matrix viewMatrix;
+        public Transform Transform { get; }
+        public Matrix View => this.Transform.Matrix;
+        public Matrix Projection { get; private set; }
         public Camera()
         {
-            viewMatrix = Matrix.Identity;
+            this.Transform = new Transform();
+            this.Projection = Matrix.Perspective(90f, 1f, 0.1f, 100f);
         }
 
         public void ZoomInOut(float viewScale)
         {
-            viewMatrix *= Matrix.Scale(new Vector(viewScale, viewScale,viewScale));
+            this.Transform.Scale(viewScale);
         }
 
-        public void MoveCamera(Vector vector)
-        {
-            viewMatrix *= Matrix.Translation(vector);
-        }
-
-        public void CameraControl(Window window, Material material)
+        public void CameraControl(Window window, float fixedDeltaTime)
         {
             float viewScale = 1f;
             if (window.GetKey(Keys.M))
@@ -28,7 +26,7 @@ namespace SharpEngine
                 viewScale *= 0.99f;
                 this.ZoomInOut(viewScale);
             }
-
+            
             if (window.GetKey(Keys.N))
             {
                 viewScale *= 1.01f;
@@ -37,29 +35,38 @@ namespace SharpEngine
 
             if (window.GetKey(Keys.A))
             {
-                Vector moveVec = new Vector(0.01f, 0, 0);
-                this.MoveCamera(moveVec);
+                Vector moveVec = Vector.Right * fixedDeltaTime;
+                this.Transform.Move(moveVec);
             }
 
             if (window.GetKey(Keys.D))
             {
-                Vector moveVec = new Vector(-0.01f, 0, 0);
-                this.MoveCamera(moveVec);
+                Vector moveVec = Vector.Left * fixedDeltaTime;
+                this.Transform.Move(moveVec);
             }
 
             if (window.GetKey(Keys.W))
             {
-                Vector moveVec = new Vector(0, -0.01f, 0);
-                this.MoveCamera(moveVec);
+                Vector moveVec = Vector.Down * fixedDeltaTime;
+                this.Transform.Move(moveVec);
             }
-
+            
             if (window.GetKey(Keys.S))
             {
-                Vector moveVec = new Vector(0, 0.01f, 0);
-                this.MoveCamera(moveVec);
+                Vector moveVec = Vector.Up * fixedDeltaTime;
+                this.Transform.Move(moveVec);
             }
-
-            material.SetViewTransform(this.viewMatrix);
+            
+            if (window.GetKey(Keys.K))
+            {
+                Vector moveVec = new Vector(0f, 0f, 1f) * fixedDeltaTime;
+                this.Transform.Move(moveVec);
+            }
+            if (window.GetKey(Keys.L))
+            {
+                Vector moveVec = new Vector(0f, 0f, -1f) * fixedDeltaTime;
+                this.Transform.Move(moveVec);
+            }
         }
     }
 }

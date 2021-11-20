@@ -36,47 +36,29 @@ namespace SharpEngine
         {
             this.vertices = vertices;
             this.material = material;
-            //this.CurrentScale = 1f;
             this.direction = new Vector(0.01f, 0.01f);
             LoadShapeIntoBuffer();
             this.Transform = new Transform();
         }
-        
-        //public virtual unsafe void LoadShapeIntoBuffer()
-        void LoadShapeIntoBuffer()
-        {
-            // load the vertices into a buffer
-            vertexArray = glGenVertexArray();
-            vertexBuffer = glGenBuffer();
-            glBindVertexArray(vertexArray);
-            glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-
-            // glVertexAttribPointer(0, vertexSize, GL_FLOAT, false, vertexSize * sizeof(float), NULL);
-            // glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), NULL);
-            // glVertexAttribPointer(1, 4, GL_FLOAT, false, sizeof(Vertex), (void*)sizeof(Vector));
-            glVertexAttribPointer(0, 3, GL_FLOAT, false, Marshal.SizeOf<Vertex>(), Marshal.OffsetOf(typeof(Vertex),nameof(Vertex.position)));
-            glVertexAttribPointer(1, 4, GL_FLOAT, false, Marshal.SizeOf<Vertex>(), Marshal.OffsetOf(typeof(Vertex),nameof(Vertex.color)));
-            glEnableVertexAttribArray(0);
-            glEnableVertexAttribArray(1);
-            glBindVertexArray(0);
-        }
 
         public Vector GetMinBounds()
         {
-            var min = this.Transform.Matrix * vertices[0].position;
+            var matrix = this.Transform.Matrix;
+            var min = matrix * this.vertices[0].position;
             for (int i = 1; i < this.vertices.Length; i++)
             {
-                min = Vector.Min(min, this.Transform.Matrix * this.vertices[i].position);
+                min = Vector.Min(min, matrix * this.vertices[i].position);
             }
             return min;
         }
         
         public Vector GetMaxBounds()
         {
-            var max = this.Transform.Matrix * vertices[0].position;
+            var matrix = this.Transform.Matrix;
+            var max = matrix * this.vertices[0].position;
             for (int i = 1; i < this.vertices.Length; i++)
             {
-                max = Vector.Max(max, this.Transform.Matrix * this.vertices[i].position);
+                max = Vector.Max(max, matrix * this.vertices[i].position);
             }
             return max;
         }
@@ -105,14 +87,37 @@ namespace SharpEngine
                 vertices[i].color = color;
             }
         }
+        
+        //public virtual unsafe void LoadShapeIntoBuffer()
+        unsafe void LoadShapeIntoBuffer()
+        {
+            // load the vertices into a buffer
+            vertexArray = glGenVertexArray();
+            vertexBuffer = glGenBuffer();
+            glBindVertexArray(vertexArray);
+            glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+            
+
+            // glVertexAttribPointer(0, vertexSize, GL_FLOAT, false, vertexSize * sizeof(float), NULL);
+            // glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), NULL);
+            // glVertexAttribPointer(1, 4, GL_FLOAT, false, sizeof(Vertex), (void*)sizeof(Vector));
+            glVertexAttribPointer(0, 3, GL_FLOAT, false, Marshal.SizeOf<Vertex>(), Marshal.OffsetOf(typeof(Vertex),nameof(Vertex.position)));
+            glVertexAttribPointer(1, 4, GL_FLOAT, false, Marshal.SizeOf<Vertex>(), Marshal.OffsetOf(typeof(Vertex),nameof(Vertex.color)));
+            glEnableVertexAttribArray(0);
+            glEnableVertexAttribArray(1);
+            glBindVertexArray(0);
+        }
 
         //public virtual unsafe void Render()
-        public unsafe void Render()
+        public unsafe void Render(Camera camera)
         {
             this.material.Use();
             this.material.SetTransform(this.Transform.Matrix);
+            this.material.SetView(camera.View);
+            this.material.SetProjection(camera.Projection);
             glBindVertexArray(vertexArray);
             glBindBuffer(GL_ARRAY_BUFFER, this.vertexBuffer);
+            
             fixed (Vertex* vertex = &this.vertices[0])
             {
                 //Gl.glBufferData(Gl.GL_ARRAY_BUFFER, sizeof(Vertex) * this.vertices.Length, vertex, Gl.GL_STATIC_DRAW);
@@ -123,7 +128,5 @@ namespace SharpEngine
             Gl.glDrawArrays(Gl.GL_TRIANGLE_FAN, 0, this.vertices.Length);
             glBindVertexArray(0);
         }
-        
-
     }
 }

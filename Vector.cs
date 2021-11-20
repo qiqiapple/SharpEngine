@@ -9,6 +9,7 @@ namespace SharpEngine
         public static Vector Backward => new Vector(0, -1);
         public static Vector Right => new Vector(1, 0);
         public static Vector Left => new Vector(-1, 0);
+        public static Vector Up => new Vector(0, 1);
         public static Vector Down => new Vector(0, -1);
         public static Vector Zero => new Vector(0,  0);
 
@@ -78,7 +79,7 @@ namespace SharpEngine
         
         public float GetSquareMagnitude()
         {
-            return x * x + y * y + z * z;
+            return Dot(this,this);
         }
 
         public Vector Normalize()

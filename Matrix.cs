@@ -149,5 +149,17 @@ namespace SharpEngine
             
             return result;
         }
+        
+        public static Matrix Perspective(float fov, float aspectRatio, float nearPlane, float farPlane)
+        {
+            float yScale = 1.0f / MathF.Tan(fov * 0.5f);
+            float xScale = yScale / aspectRatio;
+            float Q = farPlane / (farPlane - nearPlane);
+
+            return new Matrix(xScale, 0.0f, 0.0f, 0.0f,
+                                      0.0f, yScale, 0.0f, 0.0f,
+                                      0.0f, 0.0f, Q, Q * nearPlane,
+                                      0.0f, 0f, -1f, 0.0f);
+        }
     }
 }

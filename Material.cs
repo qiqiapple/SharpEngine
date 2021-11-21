@@ -6,8 +6,6 @@ namespace SharpEngine
     public class Material
     {
         private readonly uint program;
-        public int ratioLocation;
-
         public Material(string vertexShaderPath, string fragmentShaderPath)
         {
             var vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -29,10 +27,13 @@ namespace SharpEngine
             
             glDeleteShader(vertexShader);
             glDeleteShader(fragmentShader);
-            
             //glUseProgram(program);
+        }
 
-            ratioLocation = glGetUniformLocation(program, "aspectRatio");
+        public void SetAspectRatio(float aspectRatio)
+        {
+            int ratioLocation = glGetUniformLocation(program, "aspectRatio");
+            glUniform1f(ratioLocation, aspectRatio);
         }
 
         public unsafe void SetTransform(Matrix matrix)

@@ -1,4 +1,5 @@
-﻿using GLFW;
+﻿using System.Runtime.CompilerServices;
+using GLFW;
 using static OpenGL.Gl;
 
 namespace SharpEngine
@@ -10,6 +11,7 @@ namespace SharpEngine
         private int windowWidth, windowHeight;
         public float WindowAspectRatio { get; private set; }
         public bool IsOpen() => !Glfw.WindowShouldClose(window);
+        public float wheel;
 
         public void Load(Scene scene)
         {
@@ -42,7 +44,7 @@ namespace SharpEngine
         {
             Glfw.PollEvents();
             ClearScreen();
-            this.scene?.Render();
+            this.scene?.Render(WindowAspectRatio);
             ChangeWindowSize();
             Glfw.SwapBuffers(window);
         }
@@ -58,6 +60,7 @@ namespace SharpEngine
         {
             return Glfw.GetKey(this.window, key) == InputState.Press;
         }
+
     }
     
 }

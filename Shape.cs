@@ -96,7 +96,11 @@ namespace SharpEngine
             vertexBuffer = glGenBuffer();
             glBindVertexArray(vertexArray);
             glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-            
+            // fixed (Vertex* vertex = &this.vertices[0])
+            // {
+            //     //Gl.glBufferData(Gl.GL_ARRAY_BUFFER, sizeof(Vertex) * this.vertices.Length, vertex, Gl.GL_STATIC_DRAW);
+            //     glBufferData(GL_ARRAY_BUFFER, Marshal.SizeOf<Vertex>() * this.vertices.Length, vertex, GL_DYNAMIC_DRAW);
+            // }
 
             // glVertexAttribPointer(0, vertexSize, GL_FLOAT, false, vertexSize * sizeof(float), NULL);
             // glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), NULL);
@@ -109,20 +113,21 @@ namespace SharpEngine
         }
 
         //public virtual unsafe void Render()
-        public unsafe void Render(Camera camera)
+        public unsafe void Render(Camera camera, float aspectRatio)
         {
             this.material.Use();
             this.material.SetTransform(this.Transform.Matrix);
             this.material.SetView(camera.View);
             this.material.SetProjection(camera.Projection);
+            this.material.SetAspectRatio(aspectRatio);
             glBindVertexArray(vertexArray);
             glBindBuffer(GL_ARRAY_BUFFER, this.vertexBuffer);
-            
             fixed (Vertex* vertex = &this.vertices[0])
             {
                 //Gl.glBufferData(Gl.GL_ARRAY_BUFFER, sizeof(Vertex) * this.vertices.Length, vertex, Gl.GL_STATIC_DRAW);
                 glBufferData(GL_ARRAY_BUFFER, Marshal.SizeOf<Vertex>() * this.vertices.Length, vertex, GL_DYNAMIC_DRAW);
             }
+
             //Gl.glDrawArrays(Gl.GL_TRIANGLES, 0, this.vertices.Length);
             //Gl.glDrawArrays(Gl.GL_TRIANGLE_STRIP, 0, this.vertices.Length);
             Gl.glDrawArrays(Gl.GL_TRIANGLE_FAN, 0, this.vertices.Length);

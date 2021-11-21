@@ -21,8 +21,6 @@
         {
             CurrentScale *= multiplier;
         }
-        
-        
 
         public void Move(Vector direction)
         {

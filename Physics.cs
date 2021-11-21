@@ -13,37 +13,42 @@ namespace SharpEngine
 
         public void Update(float deltaTime)
         {
+            var gravitationalAcceleration = Vector.Down * 9.819649f * 0f;
             for (int i = 0; i < this.scene.shapes.Count; i++)
             {
+                // Circle shape = this.scene.shapes[i] as Circle;
+                // CirMovement(deltaTime, shape, gravitationalAcceleration);
+                // for (int j = i+1; j < this.scene.shapes.Count; j++)
+                // {
+                //     Circle other = this.scene.shapes[j] as Circle;
+                //     CirCirCollision(shape, other);
+                // }
+                
                 Shape oriShape = this.scene.shapes[i];
                 if (oriShape is Circle)
                 {
-                    //Circle shape = this.scene.shapes[i] as Circle;
                     Circle shape = oriShape as Circle;
-                    ObjMovement(deltaTime, shape);
-                    // collision detection
+                    CirMovement(deltaTime, shape, gravitationalAcceleration);
                     for (int j = i+1; j < this.scene.shapes.Count; j++)
                     {
                         Shape other = this.scene.shapes[j];
                         if (other is Circle)
                         {
                             Circle otherObj = other as Circle;
-                            CircleCollision(shape, otherObj);
-                            ObjMovement(deltaTime, otherObj);
+                            CirCirCollision(shape, otherObj);
                         }
                         if (other is Rectangle)
                         {
                             Rectangle otherObj = other as Rectangle;
                             CirRecCollision(shape, otherObj);
-                            ObjMovement(deltaTime, otherObj);
                         }
                     }
                 }
-
+                
                 if (oriShape is Rectangle)
                 {
                     Rectangle shape = oriShape as Rectangle;
-                    ObjMovement(deltaTime, shape);
+                    RecMovement(deltaTime, shape, gravitationalAcceleration);
                     for (int j = i+1; j < this.scene.shapes.Count; j++)
                     {
                         Shape other = this.scene.shapes[j];
@@ -51,48 +56,40 @@ namespace SharpEngine
                         {
                             Circle otherObj = other as Circle;
                             CirRecCollision(otherObj, shape);
-                            ObjMovement(deltaTime, otherObj);
                         }
                 
                         if (other is Rectangle)
                         {
                             Rectangle otherObj = other as Rectangle;
                             RecRecCollision(shape, otherObj);
-                            ObjMovement(deltaTime, otherObj);
                         }
                     }
                 }
             }
         }
 
-        private static void ObjMovement(float deltaTime, Shape obj)
+        private static void CirMovement(float deltaTime, Circle shape, Vector gravitationalAcceleration)
         {
-            var gravitationalAcceleration = Vector.Down * 9.819649f * 0f;
-            if (obj is Rectangle)
-            {
-                Rectangle otherObj = obj as Rectangle;
-                otherObj.Transform.Position = otherObj.Transform.Position + otherObj.velocity * deltaTime;
-                var acceleration2 = otherObj.linearForce * otherObj.MassInverse;
-                acceleration2 += gravitationalAcceleration * otherObj.gravityScale;
-                otherObj.Transform.Position = otherObj.Transform.Position + acceleration2 * deltaTime * deltaTime / 2f;
-                otherObj.velocity = otherObj.velocity + acceleration2 * deltaTime;
-            }
-
-            if (obj is Circle)
-            {
-                Circle otherObj = obj as Circle;
-                otherObj.Transform.Position = otherObj.Transform.Position + otherObj.velocity * deltaTime;
-                var acceleration2 = otherObj.linearForce * otherObj.MassInverse;
-                acceleration2 += gravitationalAcceleration * otherObj.gravityScale;
-                otherObj.Transform.Position = otherObj.Transform.Position + acceleration2 * deltaTime * deltaTime / 2f;
-                otherObj.velocity = otherObj.velocity + acceleration2 * deltaTime;
-            }
+            shape.Transform.Position = shape.Transform.Position + shape.velocity * deltaTime;
+            var acceleration = shape.linearForce * shape.MassInverse;
+            acceleration += gravitationalAcceleration * shape.gravityScale;
+            shape.Transform.Position = shape.Transform.Position + acceleration * deltaTime * deltaTime / 2f;
+            shape.velocity = shape.velocity + acceleration * deltaTime;
+        }
+        
+        private static void RecMovement(float deltaTime, Rectangle shape, Vector gravitationalAcceleration)
+        {
+            shape.Transform.Position = shape.Transform.Position + shape.velocity * deltaTime;
+            var acceleration = shape.linearForce * shape.MassInverse;
+            acceleration += gravitationalAcceleration * shape.gravityScale;
+            shape.Transform.Position = shape.Transform.Position + acceleration * deltaTime * deltaTime / 2f;
+            shape.velocity = shape.velocity + acceleration * deltaTime;
         }
 
-        private static void CircleCollision(Circle shape, Circle other)
+        private static void CirCirCollision(Circle shape, Circle other)
         {
-            //Vector deltaPosition = other.Transform.Position - shape.Transform.Position;
-            Vector deltaPosition = other.GetCenter() - shape.GetCenter();
+            Vector deltaPosition = other.Transform.Position - shape.Transform.Position;
+            //Vector deltaPosition = other.GetCenter() - shape.GetCenter();
             float squareOverlap = MathF.Pow(shape.Radius + other.Radius, 2) - deltaPosition.GetSquareMagnitude();
             if (squareOverlap > 0)
             {
@@ -122,8 +119,8 @@ namespace SharpEngine
         
         private static void CirRecCollision(Circle shape, Rectangle other)
         {
-            //Vector deltaPosition = other.Transform.Position - shape.Transform.Position;
-            Vector deltaPosition = other.GetCenter() - shape.GetCenter();
+            Vector deltaPosition = other.Transform.Position - shape.Transform.Position;
+            //Vector deltaPosition = other.GetCenter() - shape.GetCenter();
             float squareOverlapX = MathF.Pow(shape.Radius + other.width/2f, 2) - MathF.Pow(deltaPosition.x, 2);
             float squareOverlapY = MathF.Pow(shape.Radius + other.height/2f, 2) - MathF.Pow(deltaPosition.y, 2);
             
@@ -150,8 +147,8 @@ namespace SharpEngine
         }
         private static void RecRecCollision(Rectangle shape, Rectangle other)
         {
-            //Vector deltaPosition = other.Transform.Position - shape.Transform.Position;
-            Vector deltaPosition = other.GetCenter() - shape.GetCenter();
+            Vector deltaPosition = other.Transform.Position - shape.Transform.Position;
+            //Vector deltaPosition = other.GetCenter() - shape.GetCenter();
             float squareOverlapX = MathF.Pow(shape.width/2f + other.width/2f,2) - MathF.Pow(deltaPosition.x,2);
             float squareOverlapY = MathF.Pow(shape.height/2f + other.height/2f,2) - MathF.Pow(deltaPosition.y,2);
             if (squareOverlapX > 0 && squareOverlapY > 0)

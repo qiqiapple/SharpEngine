@@ -18,11 +18,11 @@ namespace SharpEngine
             this.shapes.Add(shape);
         }
 
-        public void Render()
+        public void Render(float aspectRatio)
         {
             for (int i = 0; i < this.shapes.Count; i++)
             {
-                this.shapes[i].Render(this.camera);
+                this.shapes[i].Render(this.camera, aspectRatio);
             }
         }
     }

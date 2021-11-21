@@ -1,4 +1,5 @@
-﻿using GLFW;
+﻿using System;
+using GLFW;
 
 namespace SharpEngine
 {
@@ -21,12 +22,13 @@ namespace SharpEngine
         public void CameraControl(Window window, float fixedDeltaTime)
         {
             float viewScale = 1f;
+           
             if (window.GetKey(Keys.M))
             {
                 viewScale *= 0.99f;
                 this.ZoomInOut(viewScale);
             }
-            
+
             if (window.GetKey(Keys.N))
             {
                 viewScale *= 1.01f;
@@ -67,6 +69,7 @@ namespace SharpEngine
                 Vector moveVec = new Vector(0f, 0f, -1f) * fixedDeltaTime;
                 this.Transform.Move(moveVec);
             }
+
         }
     }
 }

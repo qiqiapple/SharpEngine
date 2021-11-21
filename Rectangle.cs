@@ -23,35 +23,34 @@ namespace SharpEngine
             this.width = (vertices[1].position - vertices[0].position).GetMagnitude();
             this.height = (vertices[1].position - vertices[2].position).GetMagnitude();
         }
-        
 
-        
-        public Rectangle(float width, float height, Vector position, Material material) : 
+
+        public Rectangle(float width, float height, Material material) : 
             base(new Vertex[4], material)
         {
-            vertices[0] = new Vertex(new Vector(position.x - width / 2, position.y - height / 2), Color.Red);
-            vertices[1] = new Vertex(new Vector(position.x + width / 2, position.y - height / 2), Color.Green);
-            vertices[2] = new Vertex(new Vector(position.x + width / 2, position.y + height / 2), Color.Blue);
-            vertices[3] = new Vertex(new Vector(position.x - width / 2, position.y + height / 2), Color.Yellow);
+            vertices[0] = new Vertex(new Vector(-width/2, -height/2), Color.Red);
+            vertices[1] = new Vertex(new Vector(width/2, -height/2), Color.Green);
+            vertices[2] = new Vertex(new Vector(width/2, height/2), Color.Blue);
+            vertices[3] = new Vertex(new Vector(-width/2, height/2), Color.Yellow);
             this.width = width;
             this.height = height;
         }
         
-        public Rectangle(Material material) : base(CreateRectangle(), material)
-        {
-            this.width = 0.2f;
-            this.height = 0.2f;
-        }
+        // public Rectangle(float width, float height, Material material) : base(CreateRectangle(width, height), material)
+        // {
+        //     this.width = width;
+        //     this.height = height;
+        // }
 
-        static Vertex[] CreateRectangle() {
-            const float scale = .1f;
+        static Vertex[] CreateRectangle(float width, float height) {
+            const float scale = 0.1f;
             return new Vertex[] {
-                new Vertex(new Vector(-scale, -scale), Color.Red), // LB
-                new Vertex(new Vector(scale, -scale), Color.Green), // RB
-                new Vertex(new Vector(-scale, scale), Color.Blue), // LT
-                new Vertex(new Vector(scale, -scale), Color.Green), // RB
-                new Vertex(new Vector(scale, scale), Color.Red), // RT
-                new Vertex(new Vector(-scale, scale), Color.Blue) // LT
+                new Vertex(new Vector(-width/2, -height/2), Color.Red), // LB
+                new Vertex(new Vector(width/2, -height/2), Color.Green), // RB
+                new Vertex(new Vector(-width/2, height/2), Color.Blue), // LT
+                new Vertex(new Vector(width/2, -height/2), Color.Green), // RB
+                new Vertex(new Vector(width/2, height/2), Color.Red), // RT
+                new Vertex(new Vector(-width/2, height/2), Color.Blue) // LT
             };
         }
         

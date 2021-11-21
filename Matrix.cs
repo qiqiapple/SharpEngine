@@ -157,9 +157,9 @@ namespace SharpEngine
             float Q = farPlane / (farPlane - nearPlane);
 
             return new Matrix(xScale, 0.0f, 0.0f, 0.0f,
-                                      0.0f, yScale, 0.0f, 0.0f,
-                                      0.0f, 0.0f, Q, Q * nearPlane,
-                                      0.0f, 0f, -1f, 0.0f);
+                              0.0f, yScale, 0.0f, 0.0f,
+                              0.0f, 0.0f, Q, Q * nearPlane,
+                              0.0f, 0f, -1f, 0.0f);
         }
     }
 }

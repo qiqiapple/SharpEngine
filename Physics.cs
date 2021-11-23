@@ -90,7 +90,7 @@ namespace SharpEngine
         {
             Vector deltaPosition = other.Transform.Position - shape.Transform.Position;
             //Vector deltaPosition = other.GetCenter() - shape.GetCenter();
-            float squareOverlap = MathF.Pow(shape.Radius + other.Radius, 2) - deltaPosition.GetSquareMagnitude();
+            float squareOverlap = (shape.Radius+other.Radius)*(shape.Radius+other.Radius) - deltaPosition.GetSquareMagnitude();
             if (squareOverlap > 0)
             {
                 float overlap = MathF.Sqrt(squareOverlap);
@@ -121,8 +121,8 @@ namespace SharpEngine
         {
             Vector deltaPosition = other.Transform.Position - shape.Transform.Position;
             //Vector deltaPosition = other.GetCenter() - shape.GetCenter();
-            float squareOverlapX = MathF.Pow(shape.Radius + other.width/2f, 2) - MathF.Pow(deltaPosition.x, 2);
-            float squareOverlapY = MathF.Pow(shape.Radius + other.height/2f, 2) - MathF.Pow(deltaPosition.y, 2);
+            float squareOverlapX = (shape.Radius+other.width/2f)*(shape.Radius+other.width/2f) - deltaPosition.x*deltaPosition.x;
+            float squareOverlapY = (shape.Radius+other.height/2f)*(shape.Radius+other.height/2f) - deltaPosition.y*deltaPosition.y;
             
             if (squareOverlapX > 0 && squareOverlapY > 0)
             {
@@ -149,8 +149,8 @@ namespace SharpEngine
         {
             Vector deltaPosition = other.Transform.Position - shape.Transform.Position;
             //Vector deltaPosition = other.GetCenter() - shape.GetCenter();
-            float squareOverlapX = MathF.Pow(shape.width/2f + other.width/2f,2) - MathF.Pow(deltaPosition.x,2);
-            float squareOverlapY = MathF.Pow(shape.height/2f + other.height/2f,2) - MathF.Pow(deltaPosition.y,2);
+            float squareOverlapX = (shape.width/2f+other.width/2f)*(shape.width/2f+other.width/2f) - deltaPosition.x*deltaPosition.x;
+            float squareOverlapY = (shape.height/2f+other.height/2f)*(shape.height/2f+other.height/2f) - deltaPosition.y*deltaPosition.y;
             if (squareOverlapX > 0 && squareOverlapY > 0)
             {
                 float overlapX = MathF.Sqrt(squareOverlapX);
